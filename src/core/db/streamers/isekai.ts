@@ -7,7 +7,7 @@ export const isekai = [
       'https://yt3.ggpht.com/fGGhZtlfVnwINMiV4rPJMm3Jujh-ieeYvKXS2-RpSuwWrLH7uSAV-JwvDiuRZtX2GaiKm38l=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: 'AranisElvene',
-    aliases: [],
+    aliases: ['elvene', 'เอลฟ์', 'เอลวีน', 'วีน', 'เน่ซัง'],
   },
   {
     name: 'Estaa',
@@ -17,7 +17,7 @@ export const isekai = [
       'https://yt3.ggpht.com/dLO3J628sG2CutXBn1eaj3YmkfE8AAWwxpKzuLPJwk-z5TpoEVxDyT4QBFDG49QFifieNYi78A=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: '',
-    aliases: [],
+    aliases: ['estaa', 'เอสต้า', 'ต้า', 'สไลม์'],
   },
   {
     name: 'Reirin',
@@ -27,7 +27,7 @@ export const isekai = [
       'https://yt3.ggpht.com/wxqsAwW9NNwEWkxg_gfPqo-47tWLbzcYM5JaSGiQd2GbfFy_C5ZCqyNrj_lvQzztHn9IKHuA_w=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: 'KamiyuReirinV2',
-    aliases: [],
+    aliases: ['reirin', 'เรย์ริน', 'ริน', 'ผี'],
   },
   {
     name: 'Kona',
@@ -37,7 +37,7 @@ export const isekai = [
       'https://yt3.ggpht.com/REcR23aQDhwIAtqlWvg9tvsFmmJuxYRjLl8M19V8pCHjo5ZtPeYOCPEkJFqj0SczB6YZucciMA=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: 'DrakiKonaV2',
-    aliases: [],
+    aliases: ['kona', 'โคนะ', 'โคนัน', 'ลูกสาว', 'มังกร', 'มังกือ'],
   },
   {
     name: 'Mewten',
@@ -47,7 +47,7 @@ export const isekai = [
       'https://yt3.ggpht.com/X71RL_H3BrpTrhl_1lq54AvM3EZfEgfsmTrRhixK1MrNbBbXiLWrM2uZGWV61JgUavifp3ei1w=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: 'KitsunekoMewten',
-    aliases: [],
+    aliases: ['mewmew', 'mewten', 'มิว', 'จิ้งแมว'],
   },
   {
     name: 'Lafy',
@@ -57,6 +57,6 @@ export const isekai = [
       'https://yt3.ggpht.com/S8HHhWbh4yBX_6213g2tq7sys8RdZUKfHISZZ49_8vnuyufrUKCvV-WCZll-jPCd2RhT5RsrHA=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Isekai'],
     twitter: 'HanabiLafy',
-    aliases: [],
+    aliases: ['lafy', 'ลาฟี่', 'ฟี่', 'ยุง'],
   },
 ] as const;

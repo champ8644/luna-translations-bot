@@ -17,7 +17,7 @@ export const pixela = [
       'https://yt3.ggpht.com/wEre22q2Kqttj52wc_xUeWUMXPI9yuwD0raj-VgQc-0O0JQPvI8puphp0YGXOKF0dzBCU4EN=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Pixela'],
     twitter: 'HongFei_PIX',
-    aliases: [],
+    aliases: ['หงเฟย'],
   },
   {
     name: 'Zelina',
@@ -27,7 +27,7 @@ export const pixela = [
       'https://yt3.ggpht.com/4pjAgNelRNBaYyN1NXsMSITrfLzKYodDQLdT1Uz5DwEQSzgNXrtS-sbT65ZZNZZYs8vmv1zYiw=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Pixela'],
     twitter: 'Zelina_PIXv2',
-    aliases: [],
+    aliases: ['เซลิน่า', 'ลิน่า', 'บอส'],
   },
   {
     name: 'Melita',
@@ -37,7 +37,7 @@ export const pixela = [
       'https://yt3.ggpht.com/PWJGd-XIEKIr5cpxVmNrPg7YoXUvB1OOIzJXgwlfvuv3d8A2jDtGKAJFFpErmJ_xRxP0Hd1SQjw=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Pixela'],
     twitter: 'Melita_PIX',
-    aliases: [],
+    aliases: ['ต๋า', 'เมลิต้า', 'เมลิต๋า'],
   },
   {
     name: 'JuJu',
@@ -47,6 +47,6 @@ export const pixela = [
       'https://yt3.ggpht.com/Inr_qbHrHrHJ4smKEUW_NE39_-tnXqHU3HNxNkP4E-a5zHy7_F0dlrBsz3TlJSmvJIn9rVZX=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Pixela'],
     twitter: 'JuJu_PIX',
-    aliases: [],
+    aliases: ['จูจู'],
   },
 ] as const;
