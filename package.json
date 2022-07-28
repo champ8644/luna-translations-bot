@@ -1,11 +1,12 @@
 {
   "name": "luna_translations_bot",
   "version": "3",
-  "description": "Bot for the Hololive community processing all Hololive YouTube livechats.",
+  "description": "Bot forked from luna_translations for the Pixelian community processing all Pixela YouTube livechats.",
   "main": "build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "typedoc": "typedoc"
+    "typedoc": "typedoc",
+    "docker": "docker build . -t champ8644/pix-translation-bot"
   },
   "engines": {
     "node": ">=16.6"
@@ -20,11 +21,14 @@
     "@discordjs/rest": "^0.3.0",
     "@typegoose/typegoose": "^8.1.1",
     "@types/common-tags": "^1.8.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/lodash": "^4.14.182",
     "@types/node-fetch": "^2.5.11",
     "@types/ramda": "^0.27.40",
     "@types/ws": "^7.4.4",
     "better-sqlite3": "^7.4.3",
     "buffer-from": "^1.1.2",
+    "bug-killer": "^4.4.4",
     "chalk": "^4.0.0",
     "common-tags": "^1.8.0",
     "cross-spawn": "^7.0.3",
@@ -35,17 +39,24 @@
     "fp-ts": "^2.10.5",
     "immutable": "*",
     "inquirer": "^7.1.0",
+    "lien": "^3.3.1",
+    "lodash": "^4.17.21",
     "masterchat": "^0.12.0",
     "mongoose": "^5.13.5",
     "node-fetch": "^2.6.1",
     "node-oom-heapdump": "^2.2.0",
     "node-worker-threads-pool": "^1.5.0",
+    "opn": "^6.0.0",
     "piscina": "^3.1.0",
+    "pretty-bytes": "^6.0.0",
+    "r-json": "^1.2.10",
     "ramda": "^0.27.1",
     "socket.io-client": "^4.2.0",
     "ts-deepmerge": "^1.0.8",
     "ts-toolbelt": "^6.15.5",
-    "ws": "^7.4.4"
+    "ws": "^7.4.4",
+    "youtube-api": "^3.0.1",
+    "youtube-node": "^1.3.3"
   },
   "devDependencies": {
     "@types/buffer-from": "^1.1.0",

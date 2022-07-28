@@ -577,7 +577,17 @@ export const hololive = [
       'https://yt3.ggpht.com/ytc/AAUvwniXUgLD1FepLsMoqO7HnhlgwbxGmPeqKWGv1JsO=s800-c-k-c0x00ffffff-no-rj',
     groups: ['4th Generation'],
     twitter: 'amanekanatach',
-    aliases: ['kanata', 'かなた', 'pp tenshi', 'かなごり', 'kanataso', 'kanatan', 'kanakana', 'kanata-senpai', 'kanata-san'],
+    aliases: [
+      'kanata',
+      'かなた',
+      'pp tenshi',
+      'かなごり',
+      'kanataso',
+      'kanatan',
+      'kanakana',
+      'kanata-senpai',
+      'kanata-san',
+    ],
   },
   {
     name: 'IRyS',
@@ -688,4 +698,4 @@ export const hololive = [
     twitter: 'kazamairohach',
     aliases: ['Iroha'],
   },
-] as const
+] as const;
