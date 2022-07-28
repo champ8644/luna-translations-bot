@@ -5,8 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "typedoc": "typedoc",
-    "docker": "docker build . -t champ8644/pix-translation-bot"
+    "typedoc": "typedoc"
   },
   "engines": {
     "node": ">=16.6"
