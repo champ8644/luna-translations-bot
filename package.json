@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "typedoc": "typedoc"
+    "typedoc": "typedoc",
+    "start": "node build/index.js"
   },
   "engines": {
     "node": ">=16.6"
