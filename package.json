@@ -1,7 +1,7 @@
 {
   "name": "luna_translations_bot",
   "version": "3",
-  "description": "Bot forked from luna_translations for the Pixelian community processing all Pixela YouTube livechats.",
+  "description": "Bot forked from luna_translations for the community processing all livechats.",
   "main": "build/index.js",
   "scripts": {
     "tsc": "tsc",
