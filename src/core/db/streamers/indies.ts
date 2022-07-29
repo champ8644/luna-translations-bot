@@ -1,74 +1,5 @@
 export const indies = [
   {
-    name: 'kson ONAIR',
-    ytId: 'UC9ruVYPv7yJmV0Rh0NKA-Lw',
-    chName: 'kson ONAIR',
-    picture:
-      'https://yt3.ggpht.com/VPWtuf47qtRBXRf7_aEjrjcODbCXjprYIrO8_vODT611c75Dt3XpQ23LjzTzDJFEQkCJaXRmmkU=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies'],
-    twitter: 'ksononair',
-    aliases: ['kumichou'],
-  },
-  {
-    name: 'Aoi Nabi',
-    ytId: 'UCzKkwB84Y0ql0EvyOWRSkEw',
-    chName: 'Nabi',
-    picture:
-      'https://yt3.ggpht.com/SKXj1fShFZxPrc2hpGainswwrk5qEBa8zcAtE_OR8jCOL7sj3QfSD8GI0UDXqxO_i6e9nbzCQB4=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies', 'parents'],
-    twitter: 'nab0i',
-    aliases: ['nabi'],
-  },
-  {
-    name: 'Amatsuka Uto',
-    ytId: 'UCdYR5Oyz8Q4g0ZmB4PkTD7g',
-    chName: 'Uto Ch. 天使うと',
-    picture:
-      'https://yt3.ggpht.com/ytc/AKedOLThsGqeRuNWsRifet05DX5okgiiFni6vwdOeAsJHg=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies'],
-    twitter: 'amatsukauto',
-    aliases: ['uto'],
-  },
-  {
-    name: 'Discord',
-    ytId: 'UCZ5XnGb-3t7jCkXdawN2tkA',
-    chName: 'placeholder73459',
-    picture:
-      'https://yt3.ggpht.com/ytc/AKedOLQc1OCf9gztVmcVnmI_41uN9axrRP8wd4a-GflFRQ=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies'],
-    twitter: 'discord',
-    aliases: ['discord'],
-  },
-  {
-    name: 'Pochi',
-    ytId: 'UC22BVlBsZc6ta3Dqz75NU6Q',
-    chName: 'Pochimaru/POCHI-GOYA.channel',
-    picture:
-      'https://yt3.ggpht.com/ytc/AKedOLTQgr7qlDG11tgi1eCM1xawXiQD9eP2_dN3NOTQ=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies', 'parents'],
-    twitter: 'lizhi3',
-    aliases: ['pochi', 'pochimaru'],
-  },
-  {
-    name: 'Ririsya',
-    ytId: 'UC1ucgoC_sGww_Euu5iMqpQw',
-    chName: 'Ririsya Music',
-    picture:
-      'https://yt3.ggpht.com/ytc/AKedOLRRthMQ75EuWCRmhrANEXCGZ8qYjtMf1eI3ljGl=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies'],
-    twitter: 'Ririsya_music',
-    aliases: ['ririsya'],
-  },
-  {
-    name: 'wanwangomigomi',
-    ytId: 'UCpXYzk_uutXwHCpr2lcRN3w',
-    chName: '西沢5ミリ',
-    picture: '',
-    groups: ['indies', 'parents'],
-    twitter: 'wanwangomigomi',
-    aliases: [''],
-  },
-  {
     name: 'Nachoneko',
     ytId: 'UCvNn6mRroGDctnqU-FUsszg',
     chName: 'Nachoneko / 甘城なつき',
@@ -78,38 +9,63 @@ export const indies = [
     aliases: ['nachoneko'],
   },
   {
-    name: 'Naraka',
-    ytId: 'UC-o-E6I3IC2q8sAoAuM6Umg',
-    chName: 'Naraka',
-    picture: '',
-    groups: ['indies'],
-    twitter: '',
-    aliases: [],
-  },
-  {
-    name: 'Kagura Nana',
-    ytId: 'UCbfv8uuUXt3RSJGEwxny5Rw',
-    chName: 'カグラナナchannel／ななかぐら',
+    name: 'Mhoowoo Juju',
+    ytId: 'UCSviD27_MRT7oAdJUi0StPQ-FUsszg',
+    chName: 'Mhoowoo Channel SW',
     picture:
-      'https://yt3.ggpht.com/ytc/AKedOLRXNReo3pYY2AV7kE7gKUM-2W-ZfV20upW5yK2shA=s88-c-k-c0x00ffffff-no-rj',
-    groups: ['indies', 'parents'],
-    twitter: 'nana_kaguraaa',
-    aliases: ['nana', 'なな', 'ナナ'],
+      'https://yt3.ggpht.com/iHojWqnV-LH0snLw8XtNSRFp0jzXidkuroTTVja9W6dAwOBwmq5JW4zRZo0Y1CSXBk7FfLhZlg=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['indies'],
+    twitter: 'Mhoowoo',
+    aliases: ['mhoowoo', 'yoino buten', 'yoino', 'yoi', 'โยย'],
   },
   {
-    name: 'Shigure Ui',
-    ytId: 'UCt30jJgChL8qeT9VPadidSw',
-    chName: 'しぐれうい',
-    picture: '',
-    groups: ['indies', 'parents'],
-    twitter: 'ui_shig',
-    aliases: ['ui', 'uimama', 'ういママ'],
+    name: 'dtto.',
+    ytId: 'UCWNVjAzZmYUni8YBXYiy01w',
+    chName: 'dtto.',
+    picture:
+      'https://yt3.ggpht.com/fO5dSSlkNLIfG4fyOVdcCbL_ztiAVba-DUank7RtnT2lIBTCPujhAlEFeMyKATrDDZme1henbQ=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['kitten'],
+    twitter: '_dtto',
+    aliases: ['dtto', 'qu', 'ดิตโตะ'],
   },
-  // {
-  // name: 'tam', ytId: 'UCVTRz4yxAm0m3jo_4tpEcZw',
-  // chName: 'タム',
-  // picture: 'https://yt3.ggpht.com/ytc/AKedOLRRthMQ75EuWCRmhrANEXCGZ8qYjtMf1eI3ljGl=s88-c-k-c0x00ffffff-no-rj',
-  // groups: ['indies'], twitter: 'tamtam',
-  // aliases: ['tam']
-  // }
-] as const
+  {
+    name: 'Eileennoir',
+    ytId: 'UCw64ItsCX0Cb4lCjb68oTpw',
+    chName: 'Eileennoir',
+    picture:
+      'https://yt3.ggpht.com/ZCNnG0-0svJE9xUzgtEgDSWz4VP7S-viF87-a7rV3ENUc6Mv1mi6dlKBVVpbggfgVXHtRj-xaks=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['kitten'],
+    twitter: 'Eileennoir',
+    aliases: ['ไอลีน', 'ไลล่า', 'eileen', 'eileenmilky', 'eileennoir'],
+  },
+  {
+    name: 'MikuRu-0',
+    ytId: 'UCjQxLH9yqYXowVtH7a-6L-Q',
+    chName: 'MikuRu-0  V-Tubie SP Project',
+    picture:
+      'https://yt3.ggpht.com/Gys-_tyDENN3lqeNamp8xuTgsyUTUiw0jkMfQaY_Fm3DSTpm9TK4ubSJpaJNSiue276dIRAoAQ=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['StelLa'],
+    twitter: 'MikuruZER0_proj',
+    aliases: ['มิคุรุ', 'mikuru'],
+  },
+  {
+    name: 'USAMI BUNNY',
+    ytId: 'UCK8GmjIUCbl_qlRCfAR3yaA',
+    chName: 'USAMI BUNNY',
+    picture:
+      'https://yt3.ggpht.com/I3ajJuorZ_LwIJCLScl32XUPo2tHPNZocrWl0L8bJFmkkqOoWjrw3gvkDDBLjYeivaH4IXMZ1g=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['StelLa'],
+    twitter: 'Usami_Bunny_',
+    aliases: ['อุซามิ', 'บันนี่'],
+  },
+  {
+    name: 'Gibpuri',
+    ytId: 'UCompe4fS2oUss8CGTuhOSxA',
+    chName: 'Gibpuri Ch',
+    picture:
+      'https://yt3.ggpht.com/9SziX3trtanq4nNRhhs9vRI9O51mm1cDmJf3ecO-tTvz9hKMDjCZVS0aAY_E8I3sueh7Ch4tqw=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['StelLa'],
+    twitter: 'Gibpurin',
+    aliases: ['กิ๊บ', 'gibpuri'],
+  },
+] as const;

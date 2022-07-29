@@ -5,9 +5,12 @@ import { ciEquals } from '../../../helpers';
 import { createEmbed, reply } from '../../../helpers/discord';
 import { YouTubeChannelId } from '../../../modules/holodex/frames';
 import { ValidatedOptions } from '../functions';
+import { hololive } from './hololive';
+import { indies } from './indies';
 import { isekai } from './isekai';
 import { legends } from './legends';
 import { pixela } from './pixela';
+import { polygon } from './polygon';
 
 export const streamers = StreamerArray([
   // ...hololive,
@@ -16,6 +19,9 @@ export const streamers = StreamerArray([
   ...isekai,
   ...pixela,
   ...legends,
+  ...hololive,
+  ...indies,
+  ...polygon,
 ] as const);
 
 export const streamersMap: Map<YouTubeChannelId, Streamer> = new Map(
