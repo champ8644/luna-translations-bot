@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "typedoc": "typedoc",
-    "start": "node build/index.js"
+    "start": "tsc && node build/index.js"
   },
   "engines": {
     "node": ">=16.6"
