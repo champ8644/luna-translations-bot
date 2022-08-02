@@ -8,6 +8,7 @@ const MONGODB_URL = process.env.MONGODB_URL ?? 'mongodb://localhost/luna';
 export const createProvider = (arg: { name: string }) =>
   new EnmapMongo({
     ...arg,
+    dbName: 'enmap',
     url: MONGODB_URL,
   });
 
