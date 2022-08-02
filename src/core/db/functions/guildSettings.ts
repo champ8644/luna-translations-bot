@@ -1,21 +1,21 @@
 /** @file Functions accessing or interfacing with Guild settings */
+import { DocumentType } from '@typegoose/typegoose';
+import { CommandInteraction, Guild, GuildMember, Snowflake } from 'discord.js';
+import Enmap from 'enmap';
+import { UpdateQuery } from 'mongoose';
 
-import { CommandInteraction, Guild, GuildMember, Message, Snowflake } from 'discord.js'
-import { isGuild, hasRole, getGuildId } from '../../../helpers/discord'
-import { GuildSettings, BlacklistItem } from '../models'
-import { config, PermLevel } from '../../../config'
-import { asyncFind } from '../../../helpers'
-import { UpdateQuery } from 'mongoose'
-import { DocumentType } from '@typegoose/typegoose'
-import { client } from '../../lunaBotClient'
-import { YouTubeChannelId } from '../../../modules/holodex/frames'
-import { RelayedComment } from '../models/RelayedComment'
-import Enmap from 'enmap'
+import { config, PermLevel } from '../../../config';
+import { createProvider } from '../../../enmap-mongo';
+import { asyncFind } from '../../../helpers';
+import { getGuildId, hasRole, isGuild } from '../../../helpers/discord';
+import { YouTubeChannelId } from '../../../modules/holodex/frames';
+import { client } from '../../lunaBotClient';
+import { BlacklistItem, GuildSettings } from '../models';
+import { RelayedComment } from '../models/RelayedComment';
 
-export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap({
-  name: 'guildSettings',
-})
-
+export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap(
+  createProvider({ name: 'guildSettings' }),
+);
 /**
  * Returns guild settings from the DB or creates them if they don't exist.
  * Returns default settings for DMs. (guildId 0)
@@ -23,55 +23,56 @@ export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap({
 export function getSettings(
   x: CommandInteraction | Guild | GuildMember | Snowflake,
 ): GuildSettings {
-  const id = typeof x === 'string' ? x : getGuildId(x)
-  return getGuildSettings(id ?? '0')
+  const id = typeof x === 'string' ? x : getGuildId(x);
+  return getGuildSettings(id ?? '0');
 }
 
 export function getAllSettings(): GuildSettings[] {
-  return client.guilds.cache.map(getGuildSettings)
+  return client.guilds.cache.map(getGuildSettings);
 }
 
 export function addBlacklisted(g: Guild | Snowflake, item: BlacklistItem): void {
-  updateSettings(g, { blacklist: [...getSettings(g).blacklist, item] })
+  updateSettings(g, { blacklist: [...getSettings(g).blacklist, item] });
 }
 
 export function removeBlacklisted(g: Guild | Snowflake, ytId?: YouTubeChannelId): boolean {
-  const { blacklist } = getSettings(g)
-  const isValid = blacklist.some((entry) => entry.ytId === ytId)
-  const newBlacklist = blacklist.filter((entry) => entry.ytId !== ytId)
+  const { blacklist } = getSettings(g);
+  const isValid = blacklist.some((entry) => entry.ytId === ytId);
+  const newBlacklist = blacklist.filter((entry) => entry.ytId !== ytId);
 
-  if (isValid) updateSettings(g, { blacklist: newBlacklist })
-  return isValid
+  if (isValid) updateSettings(g, { blacklist: newBlacklist });
+  return isValid;
 }
 
 export function isBlacklisted(ytId: YouTubeChannelId | undefined, gid: Snowflake): boolean {
-  return getSettings(gid).blacklist.some((entry) => entry.ytId === ytId)
+  return getSettings(gid).blacklist.some((entry) => entry.ytId === ytId);
 }
 
 export function updateSettings(
   x: CommandInteraction | Guild | GuildMember | Snowflake,
   update: NewSettings,
 ): void {
-  const isObject = x instanceof CommandInteraction || x instanceof Guild || x instanceof GuildMember
-  const _id = isObject ? getGuildId(x as any) ?? '0' : (x as any)
-  const current = getSettings(_id)
-  const newData = { ...current, ...update }
+  const isObject =
+    x instanceof CommandInteraction || x instanceof Guild || x instanceof GuildMember;
+  const _id = isObject ? getGuildId(x as any) ?? '0' : (x as any);
+  const current = getSettings(_id);
+  const newData = { ...current, ...update };
 
-  guildSettingsEnmap.set(_id, newData)
+  guildSettingsEnmap.set(_id, newData);
 }
 
 export function isAdmin(x: CommandInteraction | GuildMember): boolean {
-  return hasPerms(x, 'admins')
+  return hasPerms(x, 'admins');
 }
 
 export function isBlacklister(x: CommandInteraction | GuildMember): boolean {
-  return hasPerms(x, 'blacklisters')
+  return hasPerms(x, 'blacklisters');
 }
 
 export async function getPermLevel(x: GuildMember): Promise<PermLevel> {
-  const perms = getPermLevels()
-  const userPerm = await asyncFind(perms, (level) => level.check(x))
-  return userPerm!
+  const perms = getPermLevels();
+  const userPerm = await asyncFind(perms, (level) => level.check(x));
+  return userPerm!;
 }
 
 export function filterAndStringifyHistory(
@@ -79,32 +80,34 @@ export function filterAndStringifyHistory(
   history: RelayedComment[],
   start?: string,
 ): string {
-  const g = getSettings(guild)
-  const blacklist = g.blacklist.map((entry) => entry.ytId)
-  const unwanted = g.customBannedPatterns
+  const g = getSettings(guild);
+  const blacklist = g.blacklist.map((entry) => entry.ytId);
+  const unwanted = g.customBannedPatterns;
   return history
     .filter((cmt) => isNotBanned(cmt, unwanted, blacklist))
     .map((cmt) => {
-      const startTime = new Date(Date.parse(start ?? '')).valueOf()
-      const loggedTime = new Date(+cmt.absoluteTime).valueOf()
-      const timestamp = start ? new Date(loggedTime - startTime).toISOString().substr(11, 8) : '[?]'
-      return `${timestamp} (${cmt.author}) ${cmt.body}`
+      const startTime = new Date(Date.parse(start ?? '')).valueOf();
+      const loggedTime = new Date(+cmt.absoluteTime).valueOf();
+      const timestamp = start
+        ? new Date(loggedTime - startTime).toISOString().substr(11, 8)
+        : '[?]';
+      return `${timestamp} (${cmt.author}) ${cmt.body}`;
     })
-    .join('\n')
+    .join('\n');
 }
 
 export function deleteGuildSettings(g: Snowflake): void {
-  if (guildSettingsEnmap.has(g)) guildSettingsEnmap.delete(g)
+  if (guildSettingsEnmap.has(g)) guildSettingsEnmap.delete(g);
 }
 
-export type PrivilegedRole = 'admins' | 'blacklisters'
+export type PrivilegedRole = 'admins' | 'blacklisters';
 
-export type NewSettings = UpdateQuery<DocumentType<GuildSettings>>
+export type NewSettings = UpdateQuery<DocumentType<GuildSettings>>;
 
 //// PRIVATE //////////////////////////////////////////////////////////////////
 
 function getGuildSettings(g: Guild | Snowflake): GuildSettings {
-  const _id = isGuild(g) ? g.id : g
+  const _id = isGuild(g) ? g.id : g;
   const defaults: GuildSettings = {
     _id,
     admins: [],
@@ -122,20 +125,20 @@ function getGuildSettings(g: Guild | Snowflake): GuildSettings {
     threads: false,
     twitcasting: [],
     youtube: [],
-  }
-  return guildSettingsEnmap.ensure(_id, defaults)
+  };
+  return guildSettingsEnmap.ensure(_id, defaults);
 }
 
 /** Returns perm levels in descending order (Bot Owner -> User) */
 function getPermLevels(): PermLevel[] {
-  return [...config.permLevels].sort((a, b) => b.level - a.level)
+  return [...config.permLevels].sort((a, b) => b.level - a.level);
 }
 
 function hasPerms(x: CommandInteraction | GuildMember, roleType: PrivilegedRole): boolean {
-  const settings = getSettings(x)
-  const roles = settings[roleType]
+  const settings = getSettings(x);
+  const roles = settings[roleType];
 
-  return <boolean>roles!.some((role) => hasRole(x, role))
+  return <boolean>roles!.some((role) => hasRole(x, role));
 }
 
 function isNotBanned(
@@ -146,5 +149,5 @@ function isNotBanned(
   return (
     blacklist.every((ytId) => ytId !== cmt.ytId) &&
     unwanted.every((p) => !cmt.body.toLowerCase().includes(p.toLowerCase()))
-  )
+  );
 }
