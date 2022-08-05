@@ -1,6 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { Guild, Snowflake } from 'discord.js';
 import Enmap from 'enmap';
+import EnmapMongo from 'enmap-mongo';
 import { Map as ImmutableMap } from 'immutable';
 import { UpdateQuery } from 'mongoose';
 import { head, zip } from 'ramda';
@@ -12,7 +13,18 @@ import { client } from '../../lunaBotClient';
 import { BlacklistNotice, GuildData, GuildDataDb } from '../models/GuildData';
 import { RelayedComment } from '../models/RelayedComment';
 
-export const guildDataEnmap: Enmap<Snowflake, GuildData> = new Enmap({ name: 'guildData' });
+export const guildDataEnmap = new Enmap({
+  provider: new EnmapMongo({
+    name: 'guildData',
+    dbName: 'pix-translation',
+    url: process.env.MONGODB_URL,
+  }),
+});
+
+function ensure(emap: Enmap, key: string, def: any) {
+  if (emap.has(key)) return emap.get(key);
+  return def;
+}
 
 export type ImmutableRelayHistory = ImmutableMap<VideoId, RelayedComment[]>;
 
@@ -123,7 +135,7 @@ export function getGuildData(g: Guild | Snowflake): GuildData {
     relayHistory: new Map(),
     blacklistNotices: new Map(),
   };
-  return guildDataEnmap.ensure(_id, defaults) as GuildData;
+  return ensure(guildDataEnmap, _id, defaults) as GuildData;
 }
 
 export function clearOldData(): void {

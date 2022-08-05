@@ -2,6 +2,7 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { CommandInteraction, Guild, GuildMember, Snowflake } from 'discord.js';
 import Enmap from 'enmap';
+import EnmapMongo from 'enmap-mongo';
 import { UpdateQuery } from 'mongoose';
 
 import { config, PermLevel } from '../../../config';
@@ -12,8 +13,17 @@ import { client } from '../../lunaBotClient';
 import { BlacklistItem, GuildSettings, GuildSettingsDb } from '../models';
 import { RelayedComment } from '../models/RelayedComment';
 
-export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap({
-  name: 'guildSettings',
+function ensure(emap: Enmap, key: string, def: any) {
+  if (emap.has(key)) return emap.get(key);
+  return def;
+}
+
+export const guildSettingsEnmap = new Enmap({
+  provider: new EnmapMongo({
+    name: 'guildSettings',
+    dbName: 'pix-translation',
+    url: process.env.MONGODB_URL,
+  }),
 });
 /**
  * Returns guild settings from the DB or creates them if they don't exist.
@@ -128,7 +138,7 @@ function getGuildSettings(g: Guild | Snowflake): GuildSettings {
     twitcasting: [],
     youtube: [],
   };
-  return guildSettingsEnmap.ensure(_id, defaults);
+  return ensure(guildSettingsEnmap, _id, defaults);
 }
 
 /** Returns perm levels in descending order (Bot Owner -> User) */

@@ -1,5 +1,6 @@
 import { DocumentType } from '@typegoose/typegoose';
 import Enmap from 'enmap';
+import EnmapMongo from 'enmap-mongo';
 import { UpdateQuery } from 'mongoose';
 
 import { filter, setKey } from '../../../helpers/immutableES6MapFunctions';
@@ -9,24 +10,35 @@ import { RelayedComment } from '../models/RelayedComment';
 
 const _id = '000000000022';
 
-export const botDataEnmap = new Enmap({ name: 'botData' });
+export const botDataEnmap = new Enmap({
+  provider: new EnmapMongo({
+    name: 'botData',
+    dbName: 'pix-translation',
+    url: process.env.MONGODB_URL,
+  }),
+});
+
+function ensure(emap: Enmap, key: string, def: any) {
+  if (emap.has(key)) return emap.get(key);
+  return def;
+}
 
 export function addNotifiedLive(videoId: VideoId): void {
-  const currentList = botDataEnmap.ensure('notifiedYtLives', []) as VideoId[];
+  const currentList = ensure(botDataEnmap, 'notifiedYtLives', []) as VideoId[];
   botDataEnmap.set('notifiedYtLives', [...currentList, videoId] as VideoId[]);
 }
 
 export function getNotifiedLives(): VideoId[] {
-  return botDataEnmap.ensure('notifiedYtLives', []) as VideoId[];
+  return ensure(botDataEnmap, 'notifiedYtLives', []) as VideoId[];
 }
 
 export function addNotifiedCommunityPost(url: string): void {
-  const currentList = botDataEnmap.ensure('notifiedCommunityPosts', []);
+  const currentList = ensure(botDataEnmap, 'notifiedCommunityPosts', []);
   botDataEnmap.set('notifiedCommunityPosts', [...currentList, url]);
 }
 
 export function getNotifiedCommunityPosts(): string[] {
-  return botDataEnmap.ensure('notifiedCommunityPosts', []) as string[];
+  return ensure(botDataEnmap, 'notifiedCommunityPosts', []) as string[];
 }
 
 export async function getBotData(): Promise<BotData> {
