@@ -1,5 +1,5 @@
 {
-  "name": "luna_translations_bot",
+  "name": "pix_translations_bot",
   "version": "1.2.1",
   "description": "Bot forked from luna_translations for the community processing all livechats.",
   "main": "build/index.js",

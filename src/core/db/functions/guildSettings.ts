@@ -9,7 +9,7 @@ import { asyncFind } from '../../../helpers';
 import { getGuildId, hasRole, isGuild } from '../../../helpers/discord';
 import { YouTubeChannelId } from '../../../modules/holodex/frames';
 import { client } from '../../lunaBotClient';
-import { BlacklistItem, GuildSettings } from '../models';
+import { BlacklistItem, GuildSettings, GuildSettingsDb } from '../models';
 import { RelayedComment } from '../models/RelayedComment';
 
 export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap({
@@ -47,10 +47,10 @@ export function isBlacklisted(ytId: YouTubeChannelId | undefined, gid: Snowflake
   return getSettings(gid).blacklist.some((entry) => entry.ytId === ytId);
 }
 
-export function updateSettings(
+export async function updateSettings(
   x: CommandInteraction | Guild | GuildMember | Snowflake,
   update: NewSettings,
-): void {
+): Promise<void> {
   const isObject =
     x instanceof CommandInteraction || x instanceof Guild || x instanceof GuildMember;
   const _id = isObject ? getGuildId(x as any) ?? '0' : (x as any);
@@ -58,6 +58,9 @@ export function updateSettings(
   const newData = { ...current, ...update };
 
   guildSettingsEnmap.set(_id, newData);
+
+  const query = [{ _id }, update, { upsert: true, new: true }] as const;
+  const doc = await GuildSettingsDb.findOneAndUpdate(...query);
 }
 
 export function isAdmin(x: CommandInteraction | GuildMember): boolean {

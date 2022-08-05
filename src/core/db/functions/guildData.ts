@@ -9,7 +9,7 @@ import { isGuild, snowflakeToUnix } from '../../../helpers/discord';
 import { deleteKey, filter, setKey } from '../../../helpers/immutableES6MapFunctions';
 import { VideoId, YouTubeChannelId } from '../../../modules/holodex/frames';
 import { client } from '../../lunaBotClient';
-import { BlacklistNotice, GuildData } from '../models/GuildData';
+import { BlacklistNotice, GuildData, GuildDataDb } from '../models/GuildData';
 import { RelayedComment } from '../models/RelayedComment';
 
 export const guildDataEnmap: Enmap<Snowflake, GuildData> = new Enmap({ name: 'guildData' });
@@ -106,11 +106,13 @@ export function excludeLine(g: Guild | Snowflake, videoId: VideoId, msgId: Snowf
 
 export type NewData = UpdateQuery<DocumentType<GuildData>>;
 
-export function updateGuildData(g: Guild | Snowflake, update: NewData): void {
+export async function updateGuildData(g: Guild | Snowflake, update: NewData): Promise<void> {
   const _id = (isGuild(g) ? g.id : g) ?? '0';
   const current = getGuildData(g);
   const newData = { ...current, ...update };
   guildDataEnmap.set(_id, newData);
+  const query = [{ _id }, update, { upsert: true, new: true }] as const;
+  const doc = await GuildDataDb.findOneAndUpdate(...query);
 }
 
 export function getGuildData(g: Guild | Snowflake): GuildData {
