@@ -1,29 +1,30 @@
-import { prop } from '@typegoose/typegoose'
-import { Snowflake } from 'discord.js'
-import { VideoId } from '../../../modules/holodex/frames'
+import { prop } from '@typegoose/typegoose';
+import { Snowflake } from 'discord.js';
+
+import { VideoId } from '../../../modules/holodex/frames';
 
 export class RelayedComment {
   @prop({ type: () => String, required: false })
-  public msgId?: Snowflake
+  public msgId?: Snowflake;
 
   @prop({ type: () => String, required: false })
-  public discordCh?: Snowflake
+  public discordCh?: Snowflake;
 
   @prop({ required: true })
-  public body: string
+  public body: string;
 
   @prop({ required: true })
-  public ytId: string
+  public ytId: string;
 
   @prop({ required: true })
-  public author: string
+  public author: string;
 
   @prop({ required: true })
-  public timestamp: string
+  public timestamp: string;
 
   @prop({ type: () => String, required: true })
-  public stream: VideoId
+  public stream: VideoId;
 
   @prop({ required: true })
-  public absoluteTime: number
+  public absoluteTime: number;
 }

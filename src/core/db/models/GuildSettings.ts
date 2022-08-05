@@ -2,86 +2,87 @@
  * @file MongoDB model for guild settings. Using MongoDB over a simple
  * Enmap as settings also need to be accessed from the web dashboard.
  */
-import { getModelForClass, prop } from '@typegoose/typegoose'
-import { Snowflake } from 'discord.js'
-import { StreamerName } from '../streamers/'
+import { getModelForClass, prop } from '@typegoose/typegoose';
+import { Snowflake } from 'discord.js';
+
+import { StreamerName } from '../streamers/';
 
 export class WatchFeatureSettings {
   @prop({ required: true })
-  public streamer: StreamerName
+  public streamer: StreamerName;
 
   @prop({ type: () => String, required: true })
-  public discordCh: Snowflake
+  public discordCh: Snowflake;
 
   @prop({ type: () => String })
-  public roleToNotify?: Snowflake
+  public roleToNotify?: Snowflake;
 }
 
 export class BlacklistItem {
   @prop({ required: true })
-  public ytId: string
+  public ytId: string;
 
   @prop({ required: true })
-  public name: string
+  public name: string;
 
   @prop()
-  public reason?: string
+  public reason?: string;
 }
 
 export class GuildSettings {
   @prop({ type: () => String })
-  public _id: Snowflake
+  public _id: Snowflake;
 
   @prop({ type: () => [String], default: [] })
-  public admins: Snowflake[]
+  public admins: Snowflake[];
 
   @prop({ type: () => BlacklistItem, default: [] })
-  public blacklist: BlacklistItem[]
+  public blacklist: BlacklistItem[];
 
   @prop({ type: () => [String], default: [] })
-  public blacklisters: Snowflake[]
+  public blacklisters: Snowflake[];
 
   @prop({ type: () => WatchFeatureSettings, default: [] })
-  public cameos: WatchFeatureSettings[]
+  public cameos: WatchFeatureSettings[];
 
   @prop({ type: () => WatchFeatureSettings, default: [] })
-  public community: WatchFeatureSettings[]
+  public community: WatchFeatureSettings[];
 
   @prop({ type: () => [String], default: [] })
-  public customWantedPatterns: string[]
+  public customWantedPatterns: string[];
 
   @prop({ type: () => [String], default: [] })
-  public customBannedPatterns: string[]
+  public customBannedPatterns: string[];
 
   @prop({ default: true })
-  public deepl: boolean
+  public deepl: boolean;
 
   @prop({ type: () => String })
-  public logChannel?: Snowflake
+  public logChannel?: Snowflake;
 
   @prop({ type: () => WatchFeatureSettings, default: [] })
-  public gossip: WatchFeatureSettings[]
+  public gossip: WatchFeatureSettings[];
 
   @prop({ default: true })
-  public modMessages: boolean
+  public modMessages: boolean;
 
   @prop({ type: () => WatchFeatureSettings, default: [] })
-  public relay: WatchFeatureSettings[]
+  public relay: WatchFeatureSettings[];
 
   @prop({ default: false })
-  public threads: boolean
+  public threads: boolean;
 
   @prop({ type: () => WatchFeatureSettings, default: [] })
-  public twitcasting: WatchFeatureSettings[]
+  public twitcasting: WatchFeatureSettings[];
 
   @prop({ type: () => WatchFeatureSettings })
-  youtube: WatchFeatureSettings[]
+  youtube: WatchFeatureSettings[];
 }
 
-export const GuildSettingsDb = getModelForClass(GuildSettings)
+export const GuildSettingsDb = getModelForClass(GuildSettings);
 
-export type RoleSetting = 'admins' | 'blacklisters'
+export type RoleSetting = 'admins' | 'blacklisters';
 
-export type WatchFeature = 'community' | 'gossip' | 'cameos' | 'relay' | 'twitcasting' | 'youtube'
+export type WatchFeature = 'community' | 'gossip' | 'cameos' | 'relay' | 'twitcasting' | 'youtube';
 
-export type SettingToggle = 'deepl' | 'modMessages' | 'threads'
+export type SettingToggle = 'deepl' | 'modMessages' | 'threads';

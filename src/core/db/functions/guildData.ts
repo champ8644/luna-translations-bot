@@ -5,7 +5,6 @@ import { Map as ImmutableMap } from 'immutable';
 import { UpdateQuery } from 'mongoose';
 import { head, zip } from 'ramda';
 
-import { createProvider } from '../../../enmap-mongo';
 import { isGuild, snowflakeToUnix } from '../../../helpers/discord';
 import { deleteKey, filter, setKey } from '../../../helpers/immutableES6MapFunctions';
 import { VideoId, YouTubeChannelId } from '../../../modules/holodex/frames';
@@ -13,9 +12,7 @@ import { client } from '../../lunaBotClient';
 import { BlacklistNotice, GuildData } from '../models/GuildData';
 import { RelayedComment } from '../models/RelayedComment';
 
-export const guildDataEnmap: Enmap<Snowflake, GuildData> = new Enmap(
-  createProvider({ name: 'guildData' }),
-);
+export const guildDataEnmap: Enmap<Snowflake, GuildData> = new Enmap({ name: 'guildData' });
 
 export type ImmutableRelayHistory = ImmutableMap<VideoId, RelayedComment[]>;
 

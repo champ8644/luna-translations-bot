@@ -5,7 +5,6 @@ import Enmap from 'enmap';
 import { UpdateQuery } from 'mongoose';
 
 import { config, PermLevel } from '../../../config';
-import { createProvider } from '../../../enmap-mongo';
 import { asyncFind } from '../../../helpers';
 import { getGuildId, hasRole, isGuild } from '../../../helpers/discord';
 import { YouTubeChannelId } from '../../../modules/holodex/frames';
@@ -13,9 +12,9 @@ import { client } from '../../lunaBotClient';
 import { BlacklistItem, GuildSettings } from '../models';
 import { RelayedComment } from '../models/RelayedComment';
 
-export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap(
-  createProvider({ name: 'guildSettings' }),
-);
+export const guildSettingsEnmap: Enmap<Snowflake, GuildSettings> = new Enmap({
+  name: 'guildSettings',
+});
 /**
  * Returns guild settings from the DB or creates them if they don't exist.
  * Returns default settings for DMs. (guildId 0)
