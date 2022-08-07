@@ -2,17 +2,19 @@
  * @file This file manages addition and removals from WatchFeatureSettings
  * via Discord command.
  **/
-import { createEmbed, createEmbedMessage, emoji, reply } from '../../../helpers/discord'
-import { match } from '../../../helpers/language'
-import { getSettings, updateSettings } from './'
-import { CommandInteraction, EmbedFieldData, Snowflake } from 'discord.js'
-import { findStreamerName, replyStreamerList, StreamerName, streamers } from '../../db/streamers/'
-import { WatchFeatureSettings, WatchFeature, GuildSettings } from '../../db/models'
-import { getAllSettings } from './guildSettings'
-import { splitEvery } from 'ramda'
-const { isArray } = Array
+import { CommandInteraction, EmbedFieldData, Snowflake } from 'discord.js';
+import { splitEvery } from 'ramda';
 
-export function validateInputAndModifyEntryList({
+import { createEmbed, createEmbedMessage, emoji, reply } from '../../../helpers/discord';
+import { match } from '../../../helpers/language';
+import { GuildSettings, WatchFeature, WatchFeatureSettings } from '../../db/models';
+import { findStreamerName, replyStreamerList, StreamerName, streamers } from '../../db/streamers/';
+import { getSettings, updateGuildSettings } from './';
+import { getAllSettings } from './guildSettings';
+
+const { isArray } = Array;
+
+export async function validateInputAndModifyEntryList({
   intr,
   verb,
   streamer,
@@ -20,49 +22,53 @@ export function validateInputAndModifyEntryList({
   feature,
   add,
   remove,
-}: WatchFeatureModifyOptions): void {
-  const validatedStreamer = <StreamerName | undefined>findStreamerName(streamer)
-  const mustShowList = verb !== 'clear' && !validatedStreamer
-  const g = getSettings(intr.guild!)
-  const modifyIfValid = verb === 'viewcurrent'
-    ? replyCurrent
-    : mustShowList
-    ? replyStreamerList
-    : modifyEntryList
+}: WatchFeatureModifyOptions): Promise<void> {
+  const validatedStreamer = <StreamerName | undefined>findStreamerName(streamer);
+  const mustShowList = verb !== 'clear' && !validatedStreamer;
+  const g = await getSettings(intr.guild!);
+  const modifyIfValid =
+    verb === 'viewcurrent' ? replyCurrent : mustShowList ? replyStreamerList : modifyEntryList;
 
-  modifyIfValid({ g, intr, feature, role, add, remove, verb, streamer: validatedStreamer! })
+  modifyIfValid({ g, intr, feature, role, add, remove, verb, streamer: validatedStreamer! });
 }
 
-export function getSubbedGuilds(
+export async function getSubbedGuilds(
   nameOrChannelId: string,
   features: WatchFeature | WatchFeature[],
-): GuildSettings[] {
-  const guilds = getAllSettings()
+): Promise<GuildSettings[]> {
+  const guilds = await getAllSettings();
   const streamer =
     streamers.find((s) => s.ytId === nameOrChannelId)?.name ??
-    (streamers.find((s) => s.name === nameOrChannelId)?.name as any)
-  const feats = isArray(features) ? features : [features]
+    (streamers.find((s) => s.name === nameOrChannelId)?.name as any);
+  const feats = isArray(features) ? features : [features];
 
-  return guilds.filter((g) => getSubs(g, feats).some((sub) => [streamer, 'all'].includes(sub)))
+  return guilds.filter((g) => getSubs(g, feats).some((sub) => [streamer, 'all'].includes(sub)));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 function modifyEntryList(opts: ValidatedOptions): void {
-  const g = getSettings(opts.intr)
+  const g = getSettings(opts.intr);
   const isNew = g[opts.feature].every(
     (r) => r.discordCh != opts.intr.channel?.id || r.streamer != opts.streamer,
-  )
+  );
   const applyModification = match(opts.verb, {
     add: isNew ? addEntry : notifyNotNew,
     remove: !isNew ? removeEntry : notifyNotFound,
     clear: clearEntries,
-  })
+  });
 
-  applyModification(opts)
+  applyModification(opts);
 }
 
-function addEntry({ g, feature, intr, streamer, role, add }: ValidatedOptions): void {
+async function addEntry({
+  g,
+  feature,
+  intr,
+  streamer,
+  role,
+  add,
+}: ValidatedOptions): Promise<void> {
   const newEntries = [
     ...g[feature],
     {
@@ -70,9 +76,9 @@ function addEntry({ g, feature, intr, streamer, role, add }: ValidatedOptions): 
       discordCh: intr.channel!.id,
       ...(role ? { roleToNotify: role } : {}),
     },
-  ]
+  ];
 
-  updateSettings(intr, { [feature]: newEntries })
+  await updateGuildSettings(intr, { [feature]: newEntries });
   reply(
     intr,
     createEmbed(
@@ -102,35 +108,36 @@ function addEntry({ g, feature, intr, streamer, role, add }: ValidatedOptions): 
       },
       false,
     ),
-  )
+  );
 }
 
-
 function replyCurrent({ g, feature, intr, streamer, role, add }: ValidatedOptions): void {
-  const newEntries = [
-    ...g[feature],
-  ]
+  const newEntries = [...g[feature]];
 
   reply(
     intr,
     createEmbed(
       {
         description: 'Current',
-        fields: [
-          ...getEntryFields(newEntries),
-        ],
+        fields: [...getEntryFields(newEntries)],
       },
       false,
     ),
-  )
+  );
 }
 
-function removeEntry({ feature, intr, streamer, remove, g }: ValidatedOptions): void {
+async function removeEntry({
+  feature,
+  intr,
+  streamer,
+  remove,
+  g,
+}: ValidatedOptions): Promise<void> {
   const newEntries = g[feature].filter(
     (r) => r.discordCh !== intr.channel!.id || r.streamer !== streamer,
-  )
+  );
 
-  updateSettings(intr, { [feature]: newEntries })
+  await updateGuildSettings(intr, { [feature]: newEntries });
   reply(
     intr,
     createEmbed(
@@ -151,7 +158,7 @@ function removeEntry({ feature, intr, streamer, remove, g }: ValidatedOptions): 
       },
       false,
     ),
-  )
+  );
 }
 
 function notifyNotNew({ intr, add, g, feature }: ValidatedOptions): void {
@@ -164,7 +171,7 @@ function notifyNotNew({ intr, add, g, feature }: ValidatedOptions): void {
       },
       false,
     ),
-  )
+  );
 }
 
 function notifyNotFound({ intr, remove, g, feature }: ValidatedOptions): void {
@@ -183,12 +190,12 @@ function notifyNotFound({ intr, remove, g, feature }: ValidatedOptions): void {
       },
       false,
     ),
-  )
+  );
 }
 
 async function clearEntries({ feature, intr }: ValidatedOptions): Promise<void> {
-  updateSettings(intr, { [feature]: [] })
-  reply(intr, createEmbedMessage(`Cleared all entries for ${feature}.`))
+  await updateGuildSettings(intr, { [feature]: [] });
+  reply(intr, createEmbedMessage(`Cleared all entries for ${feature}.`));
 }
 
 function getEntryFields(entries: WatchFeatureSettings[]): EmbedFieldData[] {
@@ -196,7 +203,7 @@ function getEntryFields(entries: WatchFeatureSettings[]): EmbedFieldData[] {
     name: 'Currently relayed',
     value: list || 'No one',
     inline: false,
-  }))
+  }));
 }
 
 /** Returns an array of embed-sized strings */
@@ -205,32 +212,32 @@ function getEntryList(entries: WatchFeatureSettings[], linesPerChunk: number = 2
     x.roleToNotify
       ? `${x.streamer} in <#${x.discordCh}> @mentioning <@&${x.roleToNotify}>`
       : `${x.streamer} in <#${x.discordCh}>`,
-  )
-  const chunks = splitEvery(linesPerChunk)(lines)
+  );
+  const chunks = splitEvery(linesPerChunk)(lines);
 
-  return chunks.map((chunk) => chunk.join('\n'))
+  return chunks.map((chunk) => chunk.join('\n'));
 }
 
 function getSubs(g: GuildSettings, fs: WatchFeature[]): StreamerName[] {
-  return fs.flatMap((f) => g[f].map((entry) => entry.streamer))
+  return fs.flatMap((f) => g[f].map((entry) => entry.streamer));
 }
 
 interface WatchFeatureModifyOptions {
-  intr: CommandInteraction
-  verb: 'add' | 'remove' | 'clear' | 'viewcurrent'
-  streamer: string
-  role?: Snowflake
-  feature: WatchFeature
-  add: AttemptResultMessages
-  remove: AttemptResultMessages
+  intr: CommandInteraction;
+  verb: 'add' | 'remove' | 'clear' | 'viewcurrent';
+  streamer: string;
+  role?: Snowflake;
+  feature: WatchFeature;
+  add: AttemptResultMessages;
+  remove: AttemptResultMessages;
 }
 
 export interface ValidatedOptions extends WatchFeatureModifyOptions {
-  g: GuildSettings
-  streamer: StreamerName
+  g: GuildSettings;
+  streamer: StreamerName;
 }
 
 interface AttemptResultMessages {
-  success: string
-  failure: string
+  success: string;
+  failure: string;
 }

@@ -1,12 +1,13 @@
-import { Command } from '../../helpers/discord'
-import { CommandInteraction } from 'discord.js'
-import { inspect } from 'util'
-import { config } from '../../config'
-import { client } from '../lunaBotClient' // for eval scope
-import { getSettings, updateSettings, getGuildData, updateGuildData } from '../db/functions'
-import { tryOrDefault } from '../../helpers/tryCatch'
-import { reply } from '../../helpers/discord/sendMessages'
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
+import { inspect } from 'util';
+
+import { config } from '../../config';
+import { Command } from '../../helpers/discord';
+import { reply } from '../../helpers/discord/sendMessages';
+import { tryOrDefault } from '../../helpers/tryCatch';
+import { getGuildData, getSettings, updateGuildData, updateGuildSettings } from '../db/functions';
+import { client } from '../lunaBotClient';
 
 export const run: Command = {
   config: {
@@ -21,26 +22,26 @@ export const run: Command = {
     .setDescription('run')
     .addStringOption((option) => option.setName('code').setDescription('code').setRequired(true)),
   callback: async (intr: CommandInteraction): Promise<void> => {
-    const output = await processCode(intr, intr.options.getString('code')!)
-    reply(intr, undefined, '```js\n' + output + '\n```')
+    const output = await processCode(intr, intr.options.getString('code')!);
+    reply(intr, undefined, '```js\n' + output + '\n```');
   },
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 
 async function processCode(intr: CommandInteraction, code: string): Promise<string> {
   // keep imports in eval scope via _
-  const _ = { client, intr, getSettings, updateSettings, getGuildData, updateGuildData }
-  const evaled = await tryOrDefault(() => eval(code), '')
-  const string = toString(evaled)
+  const _ = { client, intr, getSettings, updateGuildSettings, getGuildData, updateGuildData };
+  const evaled = await tryOrDefault(() => eval(code), '');
+  const string = toString(evaled);
   const cleaned = string
     .replace(/`/g, '`' + String.fromCharCode(8203))
     .replace(/@/g, '@' + String.fromCharCode(8203))
     .replaceAll(config.token ?? '[censored]', '[censored]')
-    .replaceAll(config.deeplKey ?? '[censored]', '[censored]')
-  return cleaned
+    .replaceAll(config.deeplKey ?? '[censored]', '[censored]');
+  return cleaned;
 }
 
 function toString(x: any): string {
-  return typeof x === 'string' ? x : inspect(x, { depth: 1 })
+  return typeof x === 'string' ? x : inspect(x, { depth: 1 });
 }

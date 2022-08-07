@@ -1,7 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { Guild, Snowflake } from 'discord.js';
-import Enmap from 'enmap';
-import EnmapMongo from 'enmap-mongo';
 import { Map as ImmutableMap } from 'immutable';
 import { UpdateQuery } from 'mongoose';
 import { head, zip } from 'ramda';
@@ -13,53 +11,65 @@ import { client } from '../../lunaBotClient';
 import { BlacklistNotice, GuildData, GuildDataDb } from '../models/GuildData';
 import { RelayedComment } from '../models/RelayedComment';
 
-export const guildDataEnmap = new Enmap({
-  provider: new EnmapMongo({
-    name: 'guildData',
-    dbName: 'pix-translation',
-    url: process.env.MONGODB_URL,
-  }),
-});
+// export const guildDataEnmap = new Enmap({
+//   provider: new EnmapMongo({
+//     name: 'guildData',
+//     dbName: 'pix-translation',
+//     url: process.env.MONGODB_URL,
+//   }),
+// });
 
-function ensure(emap: Enmap, key: string, def: any) {
-  if (emap.has(key)) return emap.get(key);
-  return def;
-}
+// function ensure(emap: Enmap, key: string, def: any) {
+//   if (emap.has(key)) return emap.get(key);
+//   return def;
+// }
 
 export type ImmutableRelayHistory = ImmutableMap<VideoId, RelayedComment[]>;
 
-export function getAllRelayHistories(): ImmutableMap<Snowflake, ImmutableRelayHistory> {
-  const datas = client.guilds.cache.map(getGuildData);
+export async function getAllRelayHistories(): Promise<
+  ImmutableMap<Snowflake, ImmutableRelayHistory>
+> {
+  const datas = await Promise.all(client.guilds.cache.map(getGuildData));
   const snowflakes = datas.map((g) => g._id);
   const histories = datas.map((g) => ImmutableMap(g.relayHistory));
   return ImmutableMap(zip(snowflakes, histories));
 }
 
-export function getGuildRelayHistory(g: Guild | Snowflake, videoId: VideoId): RelayedComment[];
-export function getGuildRelayHistory(g: Guild | Snowflake): ImmutableRelayHistory;
-export function getGuildRelayHistory(
+export async function getGuildRelayHistory(
+  g: Guild | Snowflake,
+  videoId: VideoId,
+): Promise<RelayedComment[]>;
+export async function getGuildRelayHistory(g: Guild | Snowflake): Promise<ImmutableRelayHistory>;
+export async function getGuildRelayHistory(
   g: Guild | Snowflake,
   videoId?: VideoId,
-): RelayedComment[] | ImmutableRelayHistory {
-  const data = getGuildData(g);
+): Promise<RelayedComment[] | ImmutableRelayHistory> {
+  const data = await getGuildData(g);
   return videoId ? data.relayHistory.get(videoId) ?? [] : ImmutableMap(data.relayHistory);
 }
 
-export function getRelayNotices(g: Guild | Snowflake): ImmutableMap<VideoId, Snowflake> {
-  return ImmutableMap(getGuildData(g).relayNotices);
+export async function getRelayNotices(
+  g: Guild | Snowflake,
+): Promise<ImmutableMap<VideoId, Snowflake>> {
+  const data = await getGuildData(g);
+  return ImmutableMap(data.relayNotices);
 }
 
-export function addRelayNotice(g: Guild | Snowflake, videoId: VideoId, msgId: Snowflake): void {
-  const data = getGuildData(g);
+export async function addRelayNotice(
+  g: Guild | Snowflake,
+  videoId: VideoId,
+  msgId: Snowflake,
+): Promise<void> {
+  const data = await getGuildData(g);
   const newNotices = setKey(videoId, msgId)(data.relayNotices);
   updateGuildData(g, { relayNotices: newNotices });
 }
 
-export function findVidIdAndCulpritByMsgId(
+export async function findVidIdAndCulpritByMsgId(
   g: Guild | Snowflake | null,
   msgId: Snowflake,
-): [VideoId | undefined, RelayedComment | undefined] {
-  const histories = g ? getGuildRelayHistory(g) : undefined;
+): Promise<[VideoId | undefined, RelayedComment | undefined]> {
+  const histories = g ? await getGuildRelayHistory(g) : undefined;
   const predicate = (cs: RelayedComment[]) => cs.some((c) => c.msgId === msgId);
   const vidId = histories?.findKey(predicate);
   const history = histories?.find(predicate);
@@ -67,48 +77,57 @@ export function findVidIdAndCulpritByMsgId(
   return [vidId, culprit];
 }
 
-export function getFlatGuildRelayHistory(g: Guild | Snowflake): RelayedComment[] {
-  const histories = getGuildRelayHistory(g);
+export async function getFlatGuildRelayHistory(g: Guild | Snowflake): Promise<RelayedComment[]> {
+  const histories = await getGuildRelayHistory(g);
   return histories.toList().toArray().flat();
 }
 
-export function addToGuildRelayHistory(
+export async function addToGuildRelayHistory(
   videoId: VideoId,
   cmt: RelayedComment,
   g: Guild | Snowflake,
-): void {
-  const history = getGuildData(g).relayHistory;
+): Promise<void> {
+  const data = await getGuildData(g);
+  const history = data.relayHistory;
   const cmts = history.get(videoId) ?? [];
   const newHistory = setKey(videoId, [...cmts, cmt])(history);
   updateGuildData(g, { relayHistory: newHistory });
 }
 
-export function deleteRelayHistory(videoId: VideoId, g: Guild | Snowflake): void {
-  const history = getGuildData(g).relayHistory;
+export async function deleteRelayHistory(videoId: VideoId, g: Guild | Snowflake): Promise<void> {
+  const data = await getGuildData(g);
+  const history = data.relayHistory;
   updateGuildData(g, { relayHistory: deleteKey(videoId)(history) });
 }
 
-export function addBlacklistNotice({
+export async function addBlacklistNotice({
   g,
   msgId,
   ytId,
   videoId,
   originalMsgId,
-}: NewBlacklistNoticeProps): void {
-  const notices = getGuildData(g).blacklistNotices;
+}: NewBlacklistNoticeProps): Promise<void> {
+  const data = await getGuildData(g);
+  const notices = data.blacklistNotices;
   const newNotice = { ytId, videoId, originalMsgId };
   updateGuildData(g, { blacklistNotices: setKey(msgId, newNotice)(notices) });
 }
 
-export function getNoticeFromMsgId(
+export async function getNoticeFromMsgId(
   g: Guild | Snowflake,
   msgId: Snowflake,
-): BlacklistNotice | undefined {
-  return getGuildData(g).blacklistNotices.get(msgId);
+): Promise<BlacklistNotice | undefined> {
+  const data = await getGuildData(g);
+  return data.blacklistNotices.get(msgId);
 }
 
-export function excludeLine(g: Guild | Snowflake, videoId: VideoId, msgId: Snowflake): void {
-  const history = getGuildData(g).relayHistory;
+export async function excludeLine(
+  g: Guild | Snowflake,
+  videoId: VideoId,
+  msgId: Snowflake,
+): Promise<void> {
+  const data = await getGuildData(g);
+  const history = data.relayHistory;
   const vidLog = history.get(videoId) ?? [];
   const culprit = vidLog.findIndex((cmt) => cmt.msgId === msgId);
   const vidHistory = [...vidLog.slice(0, culprit), ...vidLog.slice(culprit)];
@@ -118,27 +137,7 @@ export function excludeLine(g: Guild | Snowflake, videoId: VideoId, msgId: Snowf
 
 export type NewData = UpdateQuery<DocumentType<GuildData>>;
 
-export async function updateGuildData(g: Guild | Snowflake, update: NewData): Promise<void> {
-  const _id = (isGuild(g) ? g.id : g) ?? '0';
-  const current = getGuildData(g);
-  const newData = { ...current, ...update };
-  guildDataEnmap.set(_id, newData);
-  const query = [{ _id }, update, { upsert: true, new: true }] as const;
-  const doc = await GuildDataDb.findOneAndUpdate(...query);
-}
-
-export function getGuildData(g: Guild | Snowflake): GuildData {
-  const _id = (isGuild(g) ? g.id : g) ?? '0';
-  const defaults: GuildData = {
-    _id,
-    relayNotices: new Map(),
-    relayHistory: new Map(),
-    blacklistNotices: new Map(),
-  };
-  return ensure(guildDataEnmap, _id, defaults) as GuildData;
-}
-
-export function clearOldData(): void {
+export async function clearOldData(): Promise<void> {
   const now = new Date().getTime();
   const WEEK = 7 * 24 * 60 * 60 * 1000;
   const isRecentHist = (v: RelayedComment[]) =>
@@ -146,23 +145,48 @@ export function clearOldData(): void {
   const isRecentK = (_: BlacklistNotice, k: Snowflake) => snowflakeToUnix(k) - now < WEEK;
   const isRecentV = (v: Snowflake) => snowflakeToUnix(v) - now < WEEK;
 
-  client.guilds.cache.forEach((g) => {
-    const guildData = getGuildData(g);
-    const newRelayNotices = filter(guildData.relayNotices, isRecentV);
-    const newBlacklistNotices = filter(guildData.blacklistNotices, isRecentK);
-    const newRelayHistory = filter(guildData.relayHistory, isRecentHist);
+  await Promise.all(
+    client.guilds.cache.map(async (g) => {
+      const guildData = await getGuildData(g);
+      const newRelayNotices = filter(guildData.relayNotices, isRecentV);
+      const newBlacklistNotices = filter(guildData.blacklistNotices, isRecentK);
+      const newRelayHistory = filter(guildData.relayHistory, isRecentHist);
 
-    updateGuildData(guildData._id, { relayNotices: newRelayNotices });
-    updateGuildData(guildData._id, { relayHistory: newRelayHistory });
-    updateGuildData(guildData._id, { blacklistNotices: newBlacklistNotices });
-  });
-}
-
-export function deleteGuildData(g: Snowflake): void {
-  if (guildDataEnmap.has(g)) guildDataEnmap.delete(g);
+      updateGuildData(guildData._id, { relayNotices: newRelayNotices });
+      updateGuildData(guildData._id, { relayHistory: newRelayHistory });
+      updateGuildData(guildData._id, { blacklistNotices: newBlacklistNotices });
+    }),
+  );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+export async function getGuildData(g: Guild | Snowflake): Promise<GuildData> {
+  const _id = isGuild(g) ? g.id : g;
+  const defaults: GuildData = {
+    _id,
+    relayNotices: new Map(),
+    relayHistory: new Map(),
+    blacklistNotices: new Map(),
+  };
+  const query = [{ _id }, {}, { upsert: true, new: true }] as const;
+  return GuildDataDb.findOneAndUpdate(...query) || defaults;
+}
+
+export async function updateGuildData(g: Guild | Snowflake, update: NewData): Promise<void> {
+  const _id = (isGuild(g) ? g.id : g) ?? '0';
+  const current = getGuildData(g);
+  const newData = { ...current, ...update };
+
+  const query = [{ _id }, newData, { upsert: true, new: true }] as const;
+  const doc = await GuildDataDb.findOneAndUpdate(...query);
+}
+
+export async function deleteGuildData(g: Snowflake): Promise<void> {
+  const _id = (isGuild(g) ? g.id : g) ?? '0';
+  const doc = await GuildDataDb.deleteOne({ _id });
+  // if (guildDataEnmap.has(g)) guildDataEnmap.delete(g);
+}
 
 interface NewBlacklistNoticeProps {
   g: Guild | Snowflake;

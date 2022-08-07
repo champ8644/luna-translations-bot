@@ -1,22 +1,24 @@
-import { addNotifiedLive, getNotifiedLives } from '../core/db/functions'
-import { Streamer, streamers } from '../core/db/streamers'
-import { log } from '../helpers'
-import { emoji } from '../helpers/discord'
-import { notifyDiscord, NotifyOptions } from './notify'
-import { frameEmitter } from './holodex/frameEmitter'
-import { DexFrame } from './holodex/frames'
-import { isMainThread } from 'worker_threads'
-import { stripIndent } from 'common-tags'
+import { stripIndent } from 'common-tags';
+import { isMainThread } from 'worker_threads';
 
-if (isMainThread) frameEmitter.on('frame', notifyFrame)
+import { addNotifiedLive, getNotifiedLives } from '../core/db/functions';
+import { Streamer, streamers } from '../core/db/streamers';
+import { log } from '../helpers';
+import { emoji } from '../helpers/discord';
+import { frameEmitter } from './holodex/frameEmitter';
+import { DexFrame } from './holodex/frames';
+import { notifyDiscord, NotifyOptions } from './notify';
+
+if (isMainThread) frameEmitter.on('frame', notifyFrame);
 
 async function notifyFrame(frame: DexFrame): Promise<void> {
-  const streamer = streamers.find((s) => s.ytId === frame.channel.id)
-  const isRecorded = getNotifiedLives().includes(frame.id)
-  const isNew = streamer && !isRecorded
-  const mustNotify = isNew && frame.status === 'live'
+  const streamer = streamers.find((s) => s.ytId === frame.channel.id);
+  const notifiedLives = await getNotifiedLives();
+  const isRecorded = notifiedLives.includes(frame.id);
+  const isNew = streamer && !isRecorded;
+  const mustNotify = isNew && frame.status === 'live';
 
-  if (isNew) log(`${frame.status} | ${frame.id} | ${streamer!.name}`)
+  if (isNew) log(`${frame.status} | ${frame.id} | ${streamer!.name}`);
 
   if (mustNotify) {
     notifyDiscord({
@@ -26,11 +28,11 @@ async function notifyFrame(frame: DexFrame): Promise<void> {
       emoji: emoji.yt,
       avatarUrl: frame.channel.photo,
       nonEmbedText: `https://youtu.be/${frame.id}`,
-    })
+    });
 
-    notifyDiscord(getRelayNotifyProps(frame))
+    notifyDiscord(getRelayNotifyProps(frame));
 
-    addNotifiedLive(frame.id)
+    addNotifiedLive(frame.id);
   }
 }
 
@@ -47,5 +49,5 @@ export function getRelayNotifyProps(frame: DexFrame): NotifyOptions {
     videoId: frame.id,
     avatarUrl: frame.channel.photo,
     credits: true,
-  }
+  };
 }

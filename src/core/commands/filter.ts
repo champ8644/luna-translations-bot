@@ -1,11 +1,12 @@
-import { Command, createEmbed, reply } from '../../helpers/discord'
-import { getSettings, updateSettings } from '../db/functions'
-import { CommandInteraction, EmbedFieldData } from 'discord.js'
-import { oneLine } from 'common-tags'
-import { GuildSettings } from '../db/models'
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { oneLine } from 'common-tags';
+import { CommandInteraction, EmbedFieldData } from 'discord.js';
 
-const description = 'Manage custom-banned strings and custom-desired strings.'
+import { Command, createEmbed, reply } from '../../helpers/discord';
+import { getSettings, updateGuildSettings } from '../db/functions';
+import { GuildSettings } from '../db/models';
+
+const description = 'Manage custom-banned strings and custom-desired strings.';
 
 export const filter: Command = {
   config: {
@@ -34,15 +35,15 @@ export const filter: Command = {
           option.setName('pattern').setDescription('pattern').setRequired(true),
         ),
     ),
-  callback: (intr: CommandInteraction): void => {
-    const str = intr.options.getString('pattern')!
-    const g = getSettings(intr)
-    const feature = 'customBannedPatterns'
-    const current = g[feature]
-    const verb = intr.options.getSubcommand(true) as 'add' | 'remove'
+  callback: async (intr: CommandInteraction): Promise<void> => {
+    const str = intr.options.getString('pattern')!;
+    const g = await getSettings(intr);
+    const feature = 'customBannedPatterns';
+    const current = g[feature];
+    const verb = intr.options.getSubcommand(true) as 'add' | 'remove';
     const isPatternValid =
-      verb === 'add' ? current.every((s) => s !== str) : current.find((s) => s === str)
-    const modifyIfValid = isPatternValid ? modifyList : notifyInvalidPattern
+      verb === 'add' ? current.every((s) => s !== str) : current.find((s) => s === str);
+    const modifyIfValid = isPatternValid ? modifyList : notifyInvalidPattern;
 
     modifyIfValid({
       intr,
@@ -50,32 +51,32 @@ export const filter: Command = {
       verb,
       pattern: str,
       g,
-    })
+    });
   },
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const validLists = ['blacklist', 'whitelist'] as const
-const validVerbs = ['add', 'remove'] as const
-type ValidList = typeof validLists[number]
-type ValidVerb = typeof validVerbs[number]
+const validLists = ['blacklist', 'whitelist'] as const;
+const validVerbs = ['add', 'remove'] as const;
+type ValidList = typeof validLists[number];
+type ValidVerb = typeof validVerbs[number];
 
 interface ModifyPatternListOptions {
-  intr: CommandInteraction
-  type: ValidList
-  verb: ValidVerb
-  pattern: string
-  g: GuildSettings
+  intr: CommandInteraction;
+  type: ValidList;
+  verb: ValidVerb;
+  pattern: string;
+  g: GuildSettings;
 }
 
 async function modifyList(opts: ModifyPatternListOptions): Promise<void> {
-  const feature = opts.type === 'blacklist' ? 'customBannedPatterns' : 'customWantedPatterns'
-  const current = opts.g[feature]
+  const feature = opts.type === 'blacklist' ? 'customBannedPatterns' : 'customWantedPatterns';
+  const current = opts.g[feature];
   const edited =
-    opts.verb === 'add' ? [...current, opts.pattern] : current.filter((s) => s !== opts.pattern)
+    opts.verb === 'add' ? [...current, opts.pattern] : current.filter((s) => s !== opts.pattern);
 
-  updateSettings(opts.intr, { [feature]: edited })
+  await updateGuildSettings(opts.intr, { [feature]: edited });
 
   reply(
     opts.intr,
@@ -94,7 +95,7 @@ async function modifyList(opts: ModifyPatternListOptions): Promise<void> {
         ),
       ],
     }),
-  )
+  );
 }
 
 function notifyInvalidPattern(opts: ModifyPatternListOptions): void {
@@ -112,7 +113,7 @@ function notifyInvalidPattern(opts: ModifyPatternListOptions): void {
         ...createListFields(opts.g.customWantedPatterns, opts.g.customBannedPatterns),
       ],
     }),
-  )
+  );
 }
 
 function createListFields(whitelist: string[], blacklist: string[]): EmbedFieldData[] {
@@ -127,5 +128,5 @@ function createListFields(whitelist: string[], blacklist: string[]): EmbedFieldD
       value: blacklist.join(', ') || '*Nothing yet*',
       inline: false,
     },
-  ]
+  ];
 }

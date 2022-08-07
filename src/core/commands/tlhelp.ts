@@ -1,17 +1,19 @@
-import { commands } from '../lunaBotClient'
-import { getPermLevel, getSettings } from '../db/functions'
-import { CommandInteraction, EmbedField, GuildMember } from 'discord.js'
-import { Map, Set } from 'immutable'
-import { GuildSettings, WatchFeatureSettings, WatchFeature } from '../db/models'
-import { head, isEmpty } from 'ramda'
-import { Command, createEmbed, emoji, reply } from '../../helpers/discord'
-import { toTitleCase } from '../../helpers/language'
-import { stripIndents } from 'common-tags'
-import { config } from '../../config'
-import { SlashCommandBuilder } from '@discordjs/builders'
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { stripIndents } from 'common-tags';
+import { CommandInteraction, EmbedField, GuildMember } from 'discord.js';
+import { Map, Set } from 'immutable';
+import { head, isEmpty } from 'ramda';
+
+import { config } from '../../config';
+import { Command, createEmbed, emoji, reply } from '../../helpers/discord';
+import { toTitleCase } from '../../helpers/language';
+import { getPermLevel, getSettings } from '../db/functions';
+import { GuildSettings, WatchFeature, WatchFeatureSettings } from '../db/models';
+
+const { commands } = require('../lunaBotClient');
 
 const description =
-  'Displays available commands for your permission level in the requested category.'
+  'Displays available commands for your permission level in the requested category.';
 
 export const tlhelp: Command = {
   config: {
@@ -26,29 +28,30 @@ export const tlhelp: Command = {
     .setDescription(description)
     .addStringOption((option) => option.setName('category').setDescription('category')),
   callback: async (intr: CommandInteraction) => {
-    const askedCategory = intr.options.getString('category') ?? ''
-    const commands = await getCommandsAtUserLevel(intr)
-    const categories = getCategoriesOfCommands(commands)
+    const askedCategory = intr.options.getString('category') ?? '';
+    const commands = await getCommandsAtUserLevel(intr);
+    const categories = getCategoriesOfCommands(commands);
+    const settings = await getSettings(intr);
     const helpToShow = categories.includes(toTitleCase(askedCategory))
       ? getCategoryHelp(toTitleCase(askedCategory))
-      : getMainHelp(categories, getSettings(intr))
+      : getMainHelp(categories, settings);
 
-    reply(intr, helpToShow)
+    reply(intr, helpToShow);
   },
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 
 async function getCommandsAtUserLevel(intr: CommandInteraction) {
-  const authorLevel = await getPermLevel(intr.member as GuildMember)
-  return commands.filter((x) => x.config.permLevel <= authorLevel.level)
+  const authorLevel = await getPermLevel(intr.member as GuildMember);
+  return commands.filter((x) => x.config.permLevel <= authorLevel.level);
 }
 
 function getCategoriesOfCommands(commands: Map<string, Command>): Set<string> {
   return commands
     .map((cmd) => cmd.help.category)
     .toSet()
-    .filter((cat) => cat !== 'System')
+    .filter((cat) => cat !== 'System');
 }
 
 function getCategoryHelp(category: string) {
@@ -61,9 +64,9 @@ function getCategoryHelp(category: string) {
     }))
     .toList() // discards keys
     .toArray()
-    .sort((fa, fb) => fa.name.localeCompare(fb.name))
+    .sort((fa, fb) => fa.name.localeCompare(fb.name));
 
-  return createEmbed({ fields })
+  return createEmbed({ fields });
 }
 
 function getMainHelp(categories: Set<string>, settings: GuildSettings) {
@@ -77,7 +80,7 @@ function getMainHelp(categories: Set<string>, settings: GuildSettings) {
       ],
     },
     true,
-  )
+  );
 }
 
 function getCategoryFields(categories: Set<string>): Set<EmbedField> {
@@ -85,7 +88,7 @@ function getCategoryFields(categories: Set<string>): Set<EmbedField> {
     name: category,
     value: `/tlhelp [category: ${category.toLowerCase()}]`,
     inline: true,
-  }))
+  }));
 }
 
 function getSettingsField({
@@ -107,7 +110,7 @@ function getSettingsField({
       ${emoji.yt} **YouTube lives:** ${getWatchList('youtube', youtube)}
       ${emoji.tc} **TwitCasting lives:** ${getWatchList('twitcasting', twitcasting)}
     `,
-  }
+  };
 }
 
 function getBotManagerField(settings: GuildSettings): EmbedField {
@@ -118,21 +121,23 @@ function getBotManagerField(settings: GuildSettings): EmbedField {
       :tools: **Admins:** ${getRoleList('admins', settings)}
       :no_entry: **Blacklisters:** ${getRoleList('blacklisters', settings)}
     `,
-  }
+  };
 }
 
 function getWatchList(feature: WatchFeature, entries: WatchFeatureSettings[]): string {
-  const first = head(entries)
-  const firstMention = first?.roleToNotify ? `mentioning <@&${first.roleToNotify}>` : ''
+  const first = head(entries);
+  const firstMention = first?.roleToNotify ? `mentioning <@&${first.roleToNotify}>` : '';
   const templates = {
     empty: `None. Run \`${config.prefix}${feature}\``,
     one: `${first?.streamer} in <#${first?.discordCh}> ${firstMention}`,
     many: `Multiple. Run \`/${feature} viewcurrent\``,
-  }
+  };
 
-  return isEmpty(entries) ? templates.empty : entries.length === 1 ? templates.one : templates.many
+  return isEmpty(entries) ? templates.empty : entries.length === 1 ? templates.one : templates.many;
 }
 
 function getRoleList(type: 'admins' | 'blacklisters', settings: GuildSettings): string {
-  return settings[type].map((id) => `<@&${id}>`).join('') || `None yet. run ${config.prefix}${type}`
+  return (
+    settings[type].map((id) => `<@&${id}>`).join('') || `None yet. run ${config.prefix}${type}`
+  );
 }

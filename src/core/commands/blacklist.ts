@@ -1,11 +1,12 @@
-import { Command, createEmbed, createEmbedMessage, reply } from '../../helpers/discord'
-import { oneLine } from 'common-tags'
-import { getFlatGuildRelayHistory, addBlacklisted, getSettings } from '../db/functions'
-import { CommandInteraction, ContextMenuInteraction } from 'discord.js'
-import { isBlacklisted } from '../../modules/livechat/commentBooleans'
-import { RelayedComment } from '../db/models/RelayedComment'
-import { ContextMenuCommandBuilder } from '@discordjs/builders'
-import { warn } from '../../helpers'
+import { ContextMenuCommandBuilder } from '@discordjs/builders';
+import { oneLine } from 'common-tags';
+import { CommandInteraction, ContextMenuInteraction } from 'discord.js';
+
+import { warn } from '../../helpers';
+import { Command, createEmbed, createEmbedMessage, reply } from '../../helpers/discord';
+import { isBlacklisted } from '../../modules/livechat/commentBooleans';
+import { addBlacklisted, getFlatGuildRelayHistory, getSettings } from '../db/functions';
+import { RelayedComment } from '../db/models/RelayedComment';
 
 export const blacklist: Command = {
   config: {
@@ -18,33 +19,33 @@ export const blacklist: Command = {
   slash: new ContextMenuCommandBuilder().setName('blacklist').setType(3), // message
   callback: async (intr: CommandInteraction): Promise<void> => {
     if (!intr.isMessageContextMenu()) {
-      warn('Something very weird happened.')
-      return
+      warn('Something very weird happened.');
+      return;
     }
-    const reason = 'Requested by context menu interaction'
-    blacklistTl(intr, reason)
+    const reason = 'Requested by context menu interaction';
+    blacklistTl(intr, reason);
   },
-}
+};
 
 //////////////////////////////////////////////////////////////////////////////
 
-function blacklistTl(intr: ContextMenuInteraction, reason: string): void {
-  const settings = getSettings(intr.guild!)
-  const refId = intr.targetId
-  const history = getFlatGuildRelayHistory(intr.guild!)
-  const culprit = history.find((cmt) => cmt.msgId === refId)
-  const duplicate = culprit && isBlacklisted(culprit.ytId, settings)
+async function blacklistTl(intr: ContextMenuInteraction, reason: string): Promise<void> {
+  const settings = await getSettings(intr.guild!);
+  const refId = intr.targetId;
+  const history = await getFlatGuildRelayHistory(intr.guild!);
+  const culprit = history.find((cmt) => cmt.msgId === refId);
+  const duplicate = culprit && isBlacklisted(culprit.ytId, settings);
   const callback = duplicate
     ? notifyDuplicate
     : culprit
     ? addBlacklistedAndConfirm
-    : notifyTranslatorNotFound
+    : notifyTranslatorNotFound;
 
-  callback(intr, culprit!, reason)
+  callback(intr, culprit!, reason);
 }
 
 function notifyDuplicate(intr: ContextMenuInteraction): void {
-  reply(intr, createEmbedMessage(':warning: Already blacklisted'))
+  reply(intr, createEmbedMessage(':warning: Already blacklisted'));
 }
 
 function addBlacklistedAndConfirm(
@@ -52,7 +53,7 @@ function addBlacklistedAndConfirm(
   { ytId, author }: RelayedComment,
   reason: string,
 ): void {
-  addBlacklisted(intr.guild!, { ytId: ytId, name: author, reason })
+  addBlacklisted(intr.guild!, { ytId: ytId, name: author, reason });
   reply(
     intr,
     createEmbed({
@@ -74,9 +75,9 @@ function addBlacklistedAndConfirm(
         },
       ],
     }),
-  )
+  );
 }
 
 function notifyTranslatorNotFound(intr: ContextMenuInteraction): void {
-  reply(intr, createEmbedMessage(':warning: Translator data not found.'))
+  reply(intr, createEmbedMessage(':warning: Translator data not found.'));
 }
