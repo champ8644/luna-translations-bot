@@ -47,8 +47,8 @@ export async function getSubbedGuilds(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-function modifyEntryList(opts: ValidatedOptions): void {
-  const g = getSettings(opts.intr);
+async function modifyEntryList(opts: ValidatedOptions): Promise<void> {
+  const g = await getSettings(opts.intr);
   const isNew = g[opts.feature].every(
     (r) => r.discordCh != opts.intr.channel?.id || r.streamer != opts.streamer,
   );
