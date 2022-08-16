@@ -1,13 +1,14 @@
-import { ciEquals, doNothing, isJp, match } from '../../helpers'
-import { DexFrame } from '../holodex/frames'
-import { Streamer, StreamerName, streamers, streamersMap } from '../../core/db/streamers'
-import { emoji } from '../../helpers/discord'
-import { Snowflake } from 'discord.js'
-import { tl } from '../deepl'
-import { isBlacklistedOrUnwanted, isHoloID, isStreamer, isTl } from './commentBooleans'
-import { GuildSettings, WatchFeatureSettings } from '../../core/db/models'
-import { ChatComment, Entries, Blacklist } from './chatRelayer'
-import { AddChatItemAction, runsToString, MasterchatError, Masterchat } from 'masterchat'
+import { Snowflake } from 'discord.js';
+import { AddChatItemAction, Masterchat, MasterchatError, runsToString } from 'masterchat';
+
+import { GuildSettings, WatchFeatureSettings } from '../../core/db/models';
+import { Streamer, StreamerName, streamers, streamersMap } from '../../core/db/streamers';
+import { ciEquals, doNothing, isJp, match } from '../../helpers';
+import { emoji } from '../../helpers/discord';
+import { tl } from '../deepl';
+import { DexFrame } from '../holodex/frames';
+import { Blacklist, ChatComment, Entries } from './chatRelayer';
+import { isBlacklistedOrUnwanted, isHoloID, isStreamer, isTl } from './commentBooleans';
 
 export default (input: ChatWorkerInput): void => {
   allEntries = input.allEntries
@@ -170,7 +171,7 @@ export async function processComments(
 }
 
 function relayCameo(
-  { discordCh, to, cmt, deepLTl, frame, g }: RelayData,
+  { discordCh, to, cmt, deepLTl, frame, g ,e}: RelayData,
   isGossip?: boolean,
 ): SendMessageTask {
   const cleaned = cmt.body.replaceAll('`', "'")
@@ -179,7 +180,7 @@ function relayCameo(
   const camEmj = groups?.includes('Nijisanji') ? emoji.niji : emoji.holo
   const emj = isGossip ? emoji.peek : camEmj
   const mustTl = deepLTl && g.deepl
-  const line1 = `${emj} **${cmt.name}** in **${to}**'s chat: \`${cleaned}\``
+  const line1 = `${emj} <@&${e.roleToNotify}> **${cmt.name}** in **${to}**'s chat: \`${cleaned}\``
   const line2 = mustTl ? `\n${emoji.deepl}**DeepL:** \`${deepLTl}\`` : ''
   const line3 = `\n<https://youtu.be/${frame.id}>`
   return {
