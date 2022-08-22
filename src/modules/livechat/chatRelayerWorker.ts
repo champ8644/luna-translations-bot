@@ -217,7 +217,13 @@ function relayTlOrStreamerComment({
 
   const vauthor = streamersMap.get(cmt.id);
   const groups = vauthor?.groups as string[] | undefined;
-  const vemoji = groups?.includes('Nijisanji') ? emoji.niji : emoji.holo;
+  let vemoji: string | undefined;
+
+  if (groups?.includes('Pixela')) vemoji = 'pixela';
+  else if (groups?.includes('Isekai')) vemoji = 'isekai';
+  else if (groups?.includes('Legends')) vemoji = 'legends';
+  else if (groups?.includes('polygon')) vemoji = 'polygon';
+
   const premoji = isATl ? ':speech_balloon:' : isStreamer(cmt.id) ? vemoji : ':tools:';
 
   const url =
@@ -230,6 +236,8 @@ function relayTlOrStreamerComment({
   const author = isATl ? `||${cmt.name}:||` : `**${cmt.name}:**`;
   const text = cmt.body.replaceAll('`', "''");
   const tl = deepLTl && g.deepl ? `\n${emoji.deepl}**DeepL:** \`${deepLTl}\`` : '';
+
+  if (author === 'Nightbot') return;
 
   return mustPost
     ? {

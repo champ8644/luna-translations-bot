@@ -104,7 +104,7 @@ function getSettingsField({
     inline: false,
     value: stripIndents`
       :speech_balloon: **Translation relay:** ${getWatchList('relay', relay)}
-      ${emoji.holo} **Live chat cameos:** ${getWatchList('cameos', cameos)}
+      ${emoji.pixela} **Live chat cameos:** ${getWatchList('cameos', cameos)}
       ${emoji.peek} **Gossip:** ${getWatchList('gossip', gossip)}
       :family_mmbb: **Community posts:** ${getWatchList('community', community)}
       ${emoji.yt} **YouTube lives:** ${getWatchList('youtube', youtube)}

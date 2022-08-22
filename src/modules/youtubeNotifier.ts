@@ -45,7 +45,7 @@ export function getRelayNotifyProps(frame: DexFrame): NotifyOptions {
       ${frame.title}
       https://youtu.be/${frame.id}
     `,
-    emoji: emoji.holo,
+    emoji: emoji.ataru,
     videoId: frame.id,
     avatarUrl: frame.channel.photo,
     credits: true,
