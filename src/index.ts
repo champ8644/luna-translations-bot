@@ -23,3 +23,12 @@ process.on('uncaughtException', function (err) {
 });
 
 client.login(config.token);
+
+// client.on('ready', () => {
+//   console.log('ready');
+//   client.channels.fetch('999694564988297226').then((channel) => {
+//     if (channel?.isText()) {
+//       channel.send(emoji.pixela);
+//     }
+//   });
+// });

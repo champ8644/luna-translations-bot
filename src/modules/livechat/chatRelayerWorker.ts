@@ -219,10 +219,10 @@ function relayTlOrStreamerComment({
   const groups = vauthor?.groups as string[] | undefined;
   let vemoji: string | undefined;
 
-  if (groups?.includes('Pixela')) vemoji = 'pixela';
-  else if (groups?.includes('Isekai')) vemoji = 'isekai';
-  else if (groups?.includes('Legends')) vemoji = 'legends';
-  else if (groups?.includes('polygon')) vemoji = 'polygon';
+  if (groups?.includes('Pixela')) vemoji = emoji.pixela;
+  else if (groups?.includes('Isekai')) vemoji = emoji.isekai;
+  else if (groups?.includes('Legends')) vemoji = emoji.legends;
+  else if (groups?.includes('polygon')) vemoji = emoji.polygon;
 
   const premoji = isATl ? ':speech_balloon:' : isStreamer(cmt.id) ? vemoji : ':tools:';
 
