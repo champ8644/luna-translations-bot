@@ -192,11 +192,13 @@ function relayCameo(
 
   const mustTl = deepLTl && g.deepl;
 
-  const line1 = `${isGossip ? emoji.peek + ' ' : ''}${vemoji} ${
-    e.roleToNotify ? `<@&${e.roleToNotify}> ` : ''
-  }**${cmt.name}** in ${toEmoji} **${to}**'s chat: \`${cleaned}\``;
+  const line1 = `${isGossip ? emoji.peek + ' ' : ''}${vemoji} **${
+    cmt.name
+  }** in ${toEmoji} **${to}**'s chat: \`${cleaned}\``;
   const line2 = mustTl ? `\n${emoji.deepl}**DeepL:** \`${deepLTl}\`` : '';
-  const line3 = `\n<https://youtu.be/${frame.id}>`;
+  const line3 = `\n${e.roleToNotify ? `<@&${e.roleToNotify}> ` : ''} <https://youtu.be/${
+    frame.id
+  }>`;
   return {
     _tag: 'SendMessageTask',
     cid: discordCh,
