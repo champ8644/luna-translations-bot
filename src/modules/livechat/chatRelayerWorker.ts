@@ -159,6 +159,7 @@ export async function processComments(
             discordCh: e.discordCh,
             deepLTl: mustShowTl ? deepLTl : undefined,
             to: streamer?.name ?? 'Discord',
+            toEmoji: getEmojiFromSteamerGroups(streamer?.groups),
           });
         })
         .filter((x) => x !== undefined) as Task[];
@@ -170,29 +171,30 @@ export async function processComments(
   return tasks.flat();
 }
 
+function getEmojiFromSteamerGroups(groups: readonly string[] | undefined) {
+  if (groups?.includes('Pixela')) return emoji.pixela;
+  else if (groups?.includes('Isekai')) return emoji.isekai;
+  else if (groups?.includes('Legends')) return emoji.legends;
+  else if (groups?.includes('polygon')) return emoji.polygon;
+  else if (groups?.includes('Nijisanji')) return emoji.niji;
+  else return emoji.holo;
+}
+
 function relayCameo(
-  { discordCh, to, cmt, deepLTl, frame, g, e }: RelayData,
+  { discordCh, to, toEmoji, cmt, deepLTl, frame, g, e }: RelayData,
   isGossip?: boolean,
 ): SendMessageTask {
   const cleaned = cmt.body.replaceAll('`', "'");
   const stalked = streamers.find((s) => s.ytId === cmt.id);
   const groups = stalked?.groups as string[] | undefined;
 
-  let vemoji: string | undefined;
+  let vemoji = getEmojiFromSteamerGroups(groups);
 
-  if (groups?.includes('Pixela')) vemoji = emoji.pixela;
-  else if (groups?.includes('Isekai')) vemoji = emoji.isekai;
-  else if (groups?.includes('Legends')) vemoji = emoji.legends;
-  else if (groups?.includes('polygon')) vemoji = emoji.polygon;
-  else if (groups?.includes('Nijisanji')) vemoji = emoji.niji;
-  else vemoji = emoji.holo;
-
-  const emj = isGossip ? emoji.peek : vemoji;
   const mustTl = deepLTl && g.deepl;
 
-  const line1 = `${emj} ${e.roleToNotify ? `<@&${e.roleToNotify}> ` : ''}**${
-    cmt.name
-  }** in **${to}**'s chat: \`${cleaned}\``;
+  const line1 = `${isGossip ? emoji.peek + ' ' : ''}${vemoji} ${
+    e.roleToNotify ? `<@&${e.roleToNotify}> ` : ''
+  }**${cmt.name}** in ${toEmoji} **${to}**'s chat: \`${cleaned}\``;
   const line2 = mustTl ? `\n${emoji.deepl}**DeepL:** \`${deepLTl}\`` : '';
   const line3 = `\n<https://youtu.be/${frame.id}>`;
   return {
@@ -227,12 +229,8 @@ function relayTlOrStreamerComment({
 
   const vauthor = streamersMap.get(cmt.id);
   const groups = vauthor?.groups as string[] | undefined;
-  let vemoji: string | undefined;
 
-  if (groups?.includes('Pixela')) vemoji = emoji.pixela;
-  else if (groups?.includes('Isekai')) vemoji = emoji.isekai;
-  else if (groups?.includes('Legends')) vemoji = emoji.legends;
-  else if (groups?.includes('polygon')) vemoji = emoji.polygon;
+  let vemoji = getEmojiFromSteamerGroups(groups);
 
   const premoji = isATl ? ':speech_balloon:' : isStreamer(cmt.id) ? vemoji : ':tools:';
 
@@ -289,5 +287,6 @@ interface RelayData {
   g: GuildSettings;
   frame: DexFrame;
   to: StreamerName;
+  toEmoji: string;
   e: WatchFeatureSettings;
 }

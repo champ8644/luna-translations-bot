@@ -7,7 +7,7 @@ export const emoji: Record<Name, EmojiCode> = {
   ping: '<:WatamePing:864533105821220894>',
   tc: '<:TwitCasting:832638929608900689>',
   yt: '<:YouTube:832638929802493962>',
-  peek: '<:LunaPeek:873613928867975248>',
+  peek: ':eyes:',
   niji: '<:nijisanji:893782660156112986>',
   pixela: '<:PixelaLogo:1011286010077925416>',
   isekai: '<:IsekaiLogo:1011286014100263002>',
