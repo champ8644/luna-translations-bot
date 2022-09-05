@@ -177,9 +177,19 @@ function relayCameo(
   const cleaned = cmt.body.replaceAll('`', "'");
   const stalked = streamers.find((s) => s.ytId === cmt.id);
   const groups = stalked?.groups as string[] | undefined;
-  const camEmj = groups?.includes('Nijisanji') ? emoji.niji : emoji.holo;
-  const emj = isGossip ? emoji.peek : camEmj;
+
+  let vemoji: string | undefined;
+
+  if (groups?.includes('Pixela')) vemoji = emoji.pixela;
+  else if (groups?.includes('Isekai')) vemoji = emoji.isekai;
+  else if (groups?.includes('Legends')) vemoji = emoji.legends;
+  else if (groups?.includes('polygon')) vemoji = emoji.polygon;
+  else if (groups?.includes('Nijisanji')) vemoji = emoji.niji;
+  else vemoji = emoji.holo;
+
+  const emj = isGossip ? emoji.peek : vemoji;
   const mustTl = deepLTl && g.deepl;
+
   const line1 = `${emj} ${e.roleToNotify ? `<@&${e.roleToNotify}> ` : ''}**${
     cmt.name
   }** in **${to}**'s chat: \`${cleaned}\``;
