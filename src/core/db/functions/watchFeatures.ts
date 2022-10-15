@@ -199,7 +199,7 @@ async function clearEntries({ feature, intr }: ValidatedOptions): Promise<void> 
 }
 
 function getEntryFields(entries: WatchFeatureSettings[]): EmbedFieldData[] {
-  return getEntryList(entries).map((list) => ({
+  return getEntryList(entries, 10).map((list) => ({
     name: 'Currently relayed',
     value: list || 'No one',
     inline: false,
