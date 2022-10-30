@@ -69,23 +69,23 @@ export const indies = [
     aliases: ['กิ๊บ', 'gibpuri'],
   },
   {
-    name: 'Mikazuki Miffy Ch. AKD',
+    name: 'Mikazuki Miffy',
     ytId: 'UCqW4CdfjhsWPam52qG41_uA',
     chName: 'Mikazuki Miffy Ch. AKD',
     picture:
       'https://yt3.ggpht.com/jINfRvN6gsz6t8CeEpHhZJ2Ekq_o0PhqfXQDZOZt9vyym70drOnY1OpvTJqAKDiKfX39EOmyXw=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Akeru Dachi'],
     twitter: 'MiffyVtuber',
-    aliases: ['มิฟฟี่'],
+    aliases: ['มิฟฟี่', 'Miffy'],
   },
   {
-    name: 'Cherlynn K. Channel',
+    name: 'Cherlynn Kung',
     ytId: 'UCHhIQk2SuVBxR4H2PH_3j2Q',
     chName: 'Cherlynn K. Channel',
     picture:
       'https://yt3.ggpht.com/ALRNo4X-8IeFq1ochP0Tjemiw3vvI9BgImzH15TASbcpYhxnlf_YyDtVBjzvSDjWkS0dQO0hKQ=s800-c-k-c0xffffffff-no-rj-mo',
     groups: ['Nakato'],
     twitter: 'cherlynnkung',
-    aliases: [],
+    aliases: ['Cherlynn', 'Kung'],
   },
 ] as const;
