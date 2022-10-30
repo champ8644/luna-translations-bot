@@ -108,3 +108,5 @@ dist
 build/
 
 client_secret*
+
+twspace-crawler-master/*
