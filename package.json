@@ -8,9 +8,6 @@
     "typedoc": "typedoc",
     "start": "tsc && node build/index.js"
   },
-  "engines": {
-    "node": ">=16.6"
-  },
   "repository": {
     "type": "git"
   },
