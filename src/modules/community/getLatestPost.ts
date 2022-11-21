@@ -1,4 +1,4 @@
-import { getText } from '../../helpers'
+import { getText } from '../../helpers';
 
 export async function getLatestPost(channelId: string): Promise<CommunityPost | undefined> {
   const channelUrl = `https://www.youtube.com/channel/${channelId}/community`
@@ -23,7 +23,7 @@ export interface CommunityPost {
 
 function extractYtData(ytData: any, ytId: string): CommunityPost | undefined {
   const latestPost =
-    ytData.contents?.twoColumnBrowseResultsRenderer.tabs[3].tabRenderer.content.sectionListRenderer
+    ytData.contents?.twoColumnBrowseResultsRenderer.tabs[3].tabRenderer.content?.sectionListRenderer
       .contents[0].itemSectionRenderer.contents[0].backstagePostThreadRenderer?.post
       .backstagePostRenderer
   const textEls = latestPost?.contentText.runs as any[]
