@@ -9,6 +9,7 @@ import { hololive } from './hololive';
 import { indies } from './indies';
 import { isekai } from './isekai';
 import { legends } from './legends';
+import { mystic } from './mystic';
 import { pixela } from './pixela';
 import { polygon } from './polygon';
 
@@ -22,6 +23,7 @@ export const streamers = StreamerArray([
   ...hololive,
   ...indies,
   ...polygon,
+  ...mystic,
 ] as const);
 
 export const streamersMap: Map<YouTubeChannelId, Streamer> = new Map(
