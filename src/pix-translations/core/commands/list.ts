@@ -1,9 +1,10 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
-import { CommandInteraction } from 'discord.js'
-import { Command, createEmbed, reply } from '../../helpers/discord'
-import { getStreamerList } from '../db/streamers/'
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 
-const description = 'Lists supported YT channels'
+import { Command, createEmbed, reply } from '../../helpers/discord';
+import { getStreamerList } from '../db/streamers';
+
+const description = 'Lists supported YT channels';
 
 export const list: Command = {
   config: {
@@ -21,6 +22,6 @@ export const list: Command = {
         title: 'Supported channels',
         description: getStreamerList(),
       }),
-    )
+    );
   },
-}
+};

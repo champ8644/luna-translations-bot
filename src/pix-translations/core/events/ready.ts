@@ -1,6 +1,6 @@
 import { isMainThread } from 'worker_threads';
 
-import { client } from '../';
+import { client } from '..';
 import { log } from '../../helpers';
 import { clearOldBotData, clearOldData } from '../db/functions';
 

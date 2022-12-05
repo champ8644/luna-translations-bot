@@ -1,17 +1,17 @@
+import { CommandInteraction, EmbedFieldData, Snowflake } from 'discord.js';
+import { splitEvery } from 'ramda';
+
+import { getSettings, updateGuildSettings } from '.';
+import { createEmbed, createEmbedMessage, emoji, reply } from '../../../helpers/discord';
+import { match } from '../../../helpers/language';
+import { GuildSettings, WatchFeature, WatchFeatureSettings } from '../models';
+import { findStreamerName, replyStreamerList, StreamerName, streamers } from '../streamers';
+import { getAllSettings } from './guildSettings';
+
 /**
  * @file This file manages addition and removals from WatchFeatureSettings
  * via Discord command.
  **/
-import { CommandInteraction, EmbedFieldData, Snowflake } from 'discord.js';
-import { splitEvery } from 'ramda';
-
-import { createEmbed, createEmbedMessage, emoji, reply } from '../../../helpers/discord';
-import { match } from '../../../helpers/language';
-import { GuildSettings, WatchFeature, WatchFeatureSettings } from '../../db/models';
-import { findStreamerName, replyStreamerList, StreamerName, streamers } from '../../db/streamers/';
-import { getSettings, updateGuildSettings } from './';
-import { getAllSettings } from './guildSettings';
-
 const { isArray } = Array;
 
 export async function validateInputAndModifyEntryList({

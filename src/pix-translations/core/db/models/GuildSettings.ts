@@ -1,12 +1,12 @@
+import { getModelForClass, prop } from '@typegoose/typegoose';
+import { Snowflake } from 'discord.js';
+
+import { StreamerName } from '../streamers';
+
 /**
  * @file MongoDB model for guild settings. Using MongoDB over a simple
  * Enmap as settings also need to be accessed from the web dashboard.
  */
-import { getModelForClass, prop } from '@typegoose/typegoose';
-import { Snowflake } from 'discord.js';
-
-import { StreamerName } from '../streamers/';
-
 export class WatchFeatureSettings {
   @prop({ required: true })
   public streamer: StreamerName;

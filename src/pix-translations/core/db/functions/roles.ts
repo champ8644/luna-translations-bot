@@ -1,9 +1,9 @@
 import { CommandInteraction, Snowflake } from 'discord.js';
 
+import { getSettings, updateGuildSettings } from '.';
 import { match } from '../../../helpers';
 import { createEmbedMessage, reply } from '../../../helpers/discord';
 import { GuildSettings, RoleSetting } from '../models';
-import { getSettings, updateGuildSettings } from './';
 
 export function modifyRoleList(opts: RoleModifyOptions): void {
   const g = getSettings(opts.intr);

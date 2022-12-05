@@ -1,4 +1,3 @@
-/** @file Functions accessing or interfacing with Guild settings */
 import { DocumentType } from '@typegoose/typegoose';
 import { CommandInteraction, Guild, GuildMember, Snowflake } from 'discord.js';
 import { UpdateQuery } from 'mongoose';
@@ -11,6 +10,7 @@ import { client } from '../../lunaBotClient';
 import { BlacklistItem, GuildSettings, GuildSettingsDb } from '../models';
 import { RelayedComment } from '../models/RelayedComment';
 
+/** @file Functions accessing or interfacing with Guild settings */
 // function ensure(emap: Enmap, key: string, def: any) {
 //   if (emap.has(key)) return emap.get(key);
 //   return def;
