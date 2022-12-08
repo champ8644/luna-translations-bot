@@ -1,0 +1,76 @@
+{
+  "config": {
+    "url": "https://www.youtube.com/channel/UCP0BspO_AMEe3aQqqpo89Dg/live",
+    "headers": {
+      "Accept": "application/json, text/plain, */*",
+      "User-Agent": "axios/0.21.4"
+    },
+    "transformRequest": [
+      null
+    ],
+    "transformResponse": [
+      null
+    ],
+    "timeout": 0,
+    "xsrfCookieName": "XSRF-TOKEN",
+    "xsrfHeaderName": "X-XSRF-TOKEN",
+    "maxContentLength": -1,
+    "maxBodyLength": -1,
+    "transitional": {
+      "silentJSONParsing": true,
+      "forcedJSONParsing": true,
+      "clarifyTimeoutError": false
+    },
+    "method": "get"
+  },
+  "request": {
+    "_events": {
+      "socket": "[Unknown]",
+      "timeout": "[Unknown]",
+      "prefinish": "[Unknown]"
+    },
+    "_eventsCount": "[Unknown]",
+    "_maxListeners": "[Unknown]",
+    "outputData": "[Unknown]",
+    "outputSize": "[Unknown]",
+    "writable": "[Unknown]",
+    "destroyed": "[Unknown]",
+    "_last": "[Unknown]",
+    "chunkedEncoding": "[Unknown]",
+    "shouldKeepAlive": "[Unknown]",
+    "_defaultKeepAlive": "[Unknown]",
+    "useChunkedEncodingByDefault": "[Unknown]",
+    "sendDate": "[Unknown]",
+    "_removedConnection": "[Unknown]",
+    "_removedContLen": "[Unknown]",
+    "_removedTE": "[Unknown]",
+    "_contentLength": "[Unknown]",
+    "_hasBody": "[Unknown]",
+    "_trailer": "[Unknown]",
+    "finished": "[Unknown]",
+    "_headerSent": "[Unknown]",
+    "_closed": "[Unknown]",
+    "socket": "[Unknown]",
+    "_header": "[Unknown]",
+    "_keepAliveTimeout": "[Unknown]",
+    "_onPendingData": "[Unknown]",
+    "agent": "[Unknown]",
+    "socketPath": "[Unknown]",
+    "method": "[Unknown]",
+    "maxHeaderSize": "[Unknown]",
+    "insecureHTTPParser": "[Unknown]",
+    "path": "[Unknown]",
+    "_ended": "[Unknown]",
+    "res": "[Unknown]",
+    "aborted": "[Unknown]",
+    "timeoutCb": "[Unknown]",
+    "upgradeOrConnect": "[Unknown]",
+    "parser": "[Unknown]",
+    "maxHeadersCount": "[Unknown]",
+    "reusedSocket": "[Unknown]",
+    "host": "[Unknown]",
+    "protocol": "[Unknown]",
+    "_redirectable": "[Unknown]"
+  },
+  "data": "[Unknown]"
+}
