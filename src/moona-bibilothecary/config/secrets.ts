@@ -20,4 +20,4 @@ if (!DISCORD_TOKEN) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const { ml_version: version } = require('../../../package.json') as { ml_version: string };
+export const { version } = require('../../../package.json') as { version: string };

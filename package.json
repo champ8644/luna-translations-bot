@@ -1,7 +1,6 @@
 {
   "name": "pix_translations_bot",
-  "version": "2.1.1",
-  "ml_version": "3.0.0",
+  "version": "3.0.0",
   "description": "Bot forked from luna_translations for the community processing all livechats.",
   "main": "build/index.js",
   "scripts": {
