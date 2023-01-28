@@ -16,7 +16,7 @@ export function main() {
           ytId: each.id.channelId,
           chName: each.snippet.channelTitle,
           picture: each.snippet.thumbnails.high.url,
-          groups: ['stella'],
+          groups: [''],
           twitter: '',
           aliases: [],
         }));
