@@ -89,7 +89,7 @@ export const indies = [
     aliases: ['Cherlynn', 'Kung'],
   },
   {
-    name: 'Magcro Ravencroft Ch.',
+    name: 'Magcro Ravencroft',
     ytId: 'UCqUKFVHfbb0ujmoxNfGSu1w',
     chName: 'Magcro Ravencroft Ch.',
     picture:
