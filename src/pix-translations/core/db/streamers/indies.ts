@@ -88,4 +88,14 @@ export const indies = [
     twitter: 'cherlynnkung',
     aliases: ['Cherlynn', 'Kung'],
   },
+  {
+    name: 'Magcro Ravencroft Ch.',
+    ytId: 'UCqUKFVHfbb0ujmoxNfGSu1w',
+    chName: 'Magcro Ravencroft Ch.',
+    picture:
+      'https://yt3.ggpht.com/bmadIQVtej2kh_yn5F56S0DrIS4SqYQQkoAhl868Orz2s-6pH7ZwU1SA3TdM6wQ8QQfPZU_oqw=s800-c-k-c0xffffffff-no-rj-mo',
+    groups: ['Senolive'],
+    twitter: 'MagcroRavenC ',
+    aliases: ['Lady', 'Magcro'],
+  },
 ] as const;

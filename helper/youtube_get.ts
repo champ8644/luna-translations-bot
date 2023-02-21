@@ -4,7 +4,7 @@ import youtube from './youtube';
 
 export function main() {
   youtube.search(
-    'Mycara Melony Ch. Pixela-Mystic',
+    'Magcro Ravencroft Ch.',
     2,
     { part: 'snippet', type: 'channel' },
     function (error, result) {
