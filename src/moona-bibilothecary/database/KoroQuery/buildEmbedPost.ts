@@ -3,10 +3,10 @@ import Discord from 'discord.js';
 import _ from 'lodash';
 
 const colorType = {
-  notmoona: "#ff0000",
-  archive: "#b29ede",
-  unarchive: "#e4c420",
-  undefined: "#888888",
+  notmoona: '#ff0000',
+  archive: '#b29ede',
+  unarchive: '#e4c420',
+  undefined: '#888888',
 } as const;
 
 type Colors = typeof colorType[keyof typeof colorType];
@@ -27,7 +27,7 @@ const EMBED_LIMIT = 4000;
 function sumArr(descriptions: Array<string>): number {
   return Math.max(
     descriptions.reduce((state, next) => state + next.length + 1, -1),
-    0
+    0,
   );
 }
 
@@ -42,11 +42,14 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
     description,
     publishedDate,
   } = props;
-  const archiveText = isArchive ? "✅ Archived" : "⛔ Unarchived";
-  const karaokeText = isKaraoke ? "🎤 Karaoke" : "🔴 Streaming";
-  let titleText = "Stream";
-  if (!isMoona) titleText = "Collab Stream";
-  else if (isKaraoke) titleText = "Karaoke Stream";
+
+  if (!title) return;
+
+  const archiveText = isArchive ? '✅ Archived' : '⛔ Unarchived';
+  const karaokeText = isKaraoke ? '🎤 Karaoke' : '🔴 Streaming';
+  let titleText = 'Stream';
+  if (!isMoona) titleText = 'Collab Stream';
+  else if (isKaraoke) titleText = 'Karaoke Stream';
   let color: Colors = colorType.undefined;
   if (!isMoona) color = colorType.notmoona;
   else if (isArchive) color = colorType.archive;
@@ -61,8 +64,8 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
         .setTimestamp(publishedDate)
         .setImage(imageLink)
         .setAuthor(
-          (isArchive ? "[Archive]" : "[Unarchive]") +
-            ` ${titleText} ${format(publishedDate, "dd/MM/yy")}`
+          (isArchive ? '[Archive]' : '[Unarchive]') +
+            ` ${titleText} ${format(publishedDate, 'dd/MM/yy')}`,
         )
         .setDescription(description)
         .setFooter(`${karaokeText} ${archiveText} 🔮 Public`),
@@ -79,8 +82,8 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
       .setTimestamp(publishedDate)
       .setImage(imageLink)
       .setAuthor(
-        (isArchive ? "[Archive]" : "[Unarchive]") +
-          ` ${titleText} ${format(publishedDate, "dd/MM/yy")} (999)`
+        (isArchive ? '[Archive]' : '[Unarchive]') +
+          ` ${titleText} ${format(publishedDate, 'dd/MM/yy')} (999)`,
       )
       .setFooter(`${karaokeText} ${archiveText} 🔮 Public`).length;
   let countLeft = baselineLeft;
@@ -89,7 +92,7 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
   description.forEach((eachDescription) => {
     const currentLineLength = eachDescription.length + 1;
     if (countLeft - currentLineLength < 0) {
-      splitDescriptions.push(descriptionBuilder.join("\n"));
+      splitDescriptions.push(descriptionBuilder.join('\n'));
       countLeft = baselineLeft;
       descriptionBuilder = [];
     }
@@ -97,12 +100,12 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
     descriptionBuilder.push(eachDescription);
   });
   if (descriptionBuilder.length) {
-    splitDescriptions.push(descriptionBuilder.join("\n"));
+    splitDescriptions.push(descriptionBuilder.join('\n'));
     descriptionBuilder = [];
   }
 
   return splitDescriptions.map((eachSplitDescription, idx) => {
-    const idxTxt = splitDescriptions.length > 1 ? ` (${idx + 1})` : "";
+    const idxTxt = splitDescriptions.length > 1 ? ` (${idx + 1})` : '';
     if (idx + 1 === splitDescriptions.length)
       return new Discord.MessageEmbed()
         .setColor(color)
@@ -111,8 +114,8 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
         .setTimestamp(publishedDate)
         .setImage(imageLink)
         .setAuthor(
-          (isArchive ? "[Archive]" : "[Unarchive]") +
-            ` ${titleText} ${format(publishedDate, "dd/MM/yy")}${idxTxt}`
+          (isArchive ? '[Archive]' : '[Unarchive]') +
+            ` ${titleText} ${format(publishedDate, 'dd/MM/yy')}${idxTxt}`,
         )
         .setDescription(eachSplitDescription)
         .setFooter(`${karaokeText} ${archiveText} 🔮 Public`);
@@ -122,8 +125,8 @@ export default function buildEmbedPost(props: BuildEmbedPostProps) {
       .setURL(streamLink)
       .setTimestamp(publishedDate)
       .setAuthor(
-        (isArchive ? "[Archive]" : "[Unarchive]") +
-          ` ${titleText} ${format(publishedDate, "dd/MM/yy")}${idxTxt}`
+        (isArchive ? '[Archive]' : '[Unarchive]') +
+          ` ${titleText} ${format(publishedDate, 'dd/MM/yy')}${idxTxt}`,
       )
       .setDescription(eachSplitDescription)
       .setFooter(`${karaokeText} ${archiveText} 🔮 Public`);

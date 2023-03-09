@@ -23,13 +23,13 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
   postHistory: Array<string> = [];
 
   help(): string {
-    return this.helpText("This is command for korotagger interpretion");
+    return this.helpText('This is command for korotagger interpretion');
   }
 
   async run(message: Message): Promise<void> {
     let activeStreamRes =
       /^\s*Active stream set <https:\/\/www\.youtube\.com\/watch\?v=(.+?)>\s*$/.exec(
-        message.content
+        message.content,
       );
     if (activeStreamRes) {
       const [, streamId] = activeStreamRes;
@@ -43,13 +43,13 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
       const streamRes = await getStreamDetails(streamId);
       if (!streamRes)
         return message.reply(
-          `Active stream at https://www.youtube.com/watch?v=${streamId} not found`
+          `Active stream at https://www.youtube.com/watch?v=${streamId} not found`,
         );
-      const json = await imgur.uploadUrl(streamRes.thumbnailUrl, "VAwVpeR");
+      const json = await imgur.uploadUrl(streamRes.thumbnailUrl, 'VAwVpeR');
       await SQL.insertIntoUpdate(
-        "stream_main",
+        'stream_main',
         { ...streamRes, thumbnailUrl: json.link, streamId },
-        "streamId"
+        'streamId',
       );
       if (!message.deleted) await message.react(moonaEmoji.approb);
     } catch (err) {
@@ -62,16 +62,16 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
     if (!embeds || !embeds.length) return;
     const { title, description } = embeds[0];
     if (!description) return;
-    const lines = description.split("\n");
+    const lines = description.split('\n');
     let main: RowMain | undefined;
-    if (title === "Tags") {
+    if (title === 'Tags') {
       const resMain =
         /^https:\/\/www\.youtube\.com\/watch\?v=(.+) start time: (\d{1,2}:\d{1,2}:\d{1,2}) JST \((\d+)\)$/.exec(
-          lines[0]
+          lines[0],
         );
       console.log(
-        "🚀 ~ file: KoroTaggerCommand.ts ~ line 71 ~ KoroTaggerCommand ~ onKoroMessage ~ resMain",
-        { resMain, line: lines[0] }
+        '🚀 ~ file: KoroTaggerCommand.ts ~ line 71 ~ KoroTaggerCommand ~ onKoroMessage ~ resMain',
+        { resMain, line: lines[0] },
       );
       if (resMain) {
         const [, streamId, timeText, numLinesText] = resMain;
@@ -82,18 +82,17 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
         /** Koro got a breaking change as of 11/4/22 */
         const resNewKoroMain =
           /^https:\/\/www\.youtube\.com\/watch\?v=(.+) <t:(\d+)> (\d+) tags \(([\d\.]+)\/min\)$/.exec(
-            lines[0]
+            lines[0],
           );
         console.log(
-          "🚀 ~ file: KoroTaggerCommand.ts ~ line 71 ~ KoroTaggerCommand ~ onKoroMessage ~ resNewKoroMain",
-          { resNewKoroMain, line: lines[0] }
+          '🚀 ~ file: KoroTaggerCommand.ts ~ line 71 ~ KoroTaggerCommand ~ onKoroMessage ~ resNewKoroMain',
+          { resNewKoroMain, line: lines[0] },
         );
         if (resNewKoroMain) {
-          const [, streamId, timestampText, numLinesText, rateAnalysis] =
-            resNewKoroMain;
+          const [, streamId, timestampText, numLinesText, rateAnalysis] = resNewKoroMain;
           const totalLines = Number(numLinesText);
           const timestampNum = Number(timestampText);
-          const timeText = format(timestampNum, "H:MM:ss");
+          const timeText = format(timestampNum, 'H:MM:ss');
           main = { streamId, timeText, totalLines };
           lines.splice(0, 1);
         }
@@ -103,11 +102,11 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
     const descriptionParsed: Array<RowLines> = lines.map((line, idx) => {
       const resDescrip =
         /^(.*)\[((?:\d+h)?(?:\d+m)?\d+s)\]\(https:\/\/youtu\.be\/(.*)\?t=((?:(\d+)h)?(?:(\d+)m)?(\d+)s)\)$/.exec(
-          line
+          line,
         );
       if (!resDescrip)
         return {
-          identifier: "",
+          identifier: '',
           fullLine: line.trim(),
           idx,
         };
@@ -115,12 +114,11 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
       const hours = Number(h) || 0;
       const minutes = Number(m) || 0;
       const seconds = Number(s) || 0;
-      const subResDescrip =
-        /^\D*(\d*)\D*[sS]ongs?.*?:\s*(.*?)(?:\s*\(\d+\)\s*)?$$/.exec(fullLine);
+      const subResDescrip = /^\D*(\d*)\D*[sS]ongs?.*?:\s*(.*?)(?:\s*\(\d+\)\s*)?$$/.exec(fullLine);
 
       if (!subResDescrip)
         return {
-          identifier: "",
+          identifier: '',
           idx,
           tsText,
           streamId,
@@ -132,7 +130,7 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
         };
       const [, songNumber, songName] = subResDescrip;
       return {
-        identifier: "",
+        identifier: '',
         idx,
         songNumber: Number(songNumber),
         songName: songName.trim(),
@@ -189,13 +187,9 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
       if (output.description.length === 0) return;
 
       const avgSongNumber = _.mean(
-        output.description
-          .map((item) => item?.songNumber)
-          .filter((x) => x !== undefined && x > 0)
+        output.description.map((item) => item?.songNumber).filter((x) => x !== undefined && x > 0),
       );
-      const descriptionFinal = output.description.filter(
-        (x) => x
-      ) as Array<RowLines>;
+      const descriptionFinal = output.description.filter((x) => x) as Array<RowLines>;
 
       const statStreamId: Record<string, number> = {};
       descriptionFinal.forEach((item) => {
@@ -209,20 +203,18 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
           if (max < val) return { max: val, maxId: key };
           return { max, maxId };
         },
-        { max: 0, maxId: "" }
+        { max: 0, maxId: '' },
       );
 
       descriptionFinal.forEach((item) => {
         item.avgSongNumber = avgSongNumber;
-        item.identifier = [item.streamId, item.idx, item.avgSongNumber].join(
-          ", "
-        );
+        item.identifier = [item.streamId, item.idx, item.avgSongNumber].join(', ');
         item.streamId = currentStreamId;
       });
 
       console.log(
-        "🚀 ~ file: KoroTaggerCommand.ts ~ line 161 ~ KoroTaggerCommand ~ onKoroMessage ~ descriptionFinal",
-        { descriptionFinal, currentStreamId, avgSongNumber, main: output.main }
+        '🚀 ~ file: KoroTaggerCommand.ts ~ line 161 ~ KoroTaggerCommand ~ onKoroMessage ~ descriptionFinal',
+        { descriptionFinal, currentStreamId, avgSongNumber, main: output.main },
       );
 
       // await addStreamLine(descriptionFinal, {
@@ -234,10 +226,7 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
 
       const streamDetails = await getDataReadiness(currentStreamId);
       if (!streamDetails.isReady) return;
-      const description = await finalizedData(
-        currentStreamId,
-        output.description
-      );
+      const description = await finalizedData(currentStreamId, output.description);
 
       if (!description.length) return;
 
@@ -249,25 +238,21 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
     }
   }
 
-  async postFinalKaraoke(
-    streamDetails: StreamDetails,
-    description: Array<string>
-  ): Promise<void> {
+  async postFinalKaraoke(streamDetails: StreamDetails, description: Array<string>): Promise<void> {
     const yt = streamDetails;
-    console.log(
-      "🚀 ~ file: korotaggerCommand.ts ~ line 179 ~ KoroTaggerCommand ~ streamDetails",
-      { streamDetails, description }
-    );
+    console.log('🚀 ~ file: korotaggerCommand.ts ~ line 179 ~ KoroTaggerCommand ~ streamDetails', {
+      streamDetails,
+      description,
+    });
     if (this.postHistory.find((post) => post === yt.streamId)) return;
     this.postHistory.push(yt.streamId);
     const publishedDate = fromUnixTime(yt.timestamp!);
     const channelPosting = await korotaggerInfo.getChannelPost();
-    if (!channelPosting)
-      throw "There is no current set channel to post karaoke.";
+    if (!channelPosting) throw 'There is no current set channel to post karaoke.';
 
     const embeds = buildEmbedPost({
       title: yt.title!,
-      streamLink: "https://youtu.be/" + yt.streamId,
+      streamLink: 'https://youtu.be/' + yt.streamId,
       isArchive: yt.isArchive!,
       isKaraoke: yt.isKaraoke!,
       isMoona: yt.isMoona!,
@@ -276,32 +261,30 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
       publishedDate,
     });
 
+    if (!embeds) return;
+
     let reply: Message | undefined;
 
     await each(embeds, async (embed) => {
       reply = await channelPosting.send({ embeds: [embed] });
     });
 
-    let nameTitle = "Moona Stream ";
-    if (!yt.isMoona) nameTitle = "Moona Collab ";
-    else if (yt.isKaraoke) nameTitle = "MoonUtau ";
+    let nameTitle = 'Moona Stream ';
+    if (!yt.isMoona) nameTitle = 'Moona Collab ';
+    else if (yt.isKaraoke) nameTitle = 'MoonUtau ';
     if (!reply) {
-      throw new Error("There is no reply");
+      throw new Error('There is no reply');
     }
     await reply.startThread({
       name:
         nameTitle +
-        (yt.isArchive ? "Archive" : "Unarchive") +
-        " - " +
-        format(publishedDate, "d MMM yyyy"),
+        (yt.isArchive ? 'Archive' : 'Unarchive') +
+        ' - ' +
+        format(publishedDate, 'd MMM yyyy'),
       autoArchiveDuration: DEV ? 1440 : 4320,
     });
 
-    await SQL.insertIntoUpdate(
-      "stream_main",
-      { isDone: true, streamId: yt.streamId },
-      "streamId"
-    );
+    await SQL.insertIntoUpdate('stream_main', { isDone: true, streamId: yt.streamId }, 'streamId');
   }
 }
 
