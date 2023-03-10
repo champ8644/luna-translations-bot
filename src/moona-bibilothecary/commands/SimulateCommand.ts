@@ -166,7 +166,7 @@ export class SimulateCommand extends Command implements CommandInterface {
 
     await this.postFinalKaraoke(streamDetails, description);
 
-    if (!message.deleted) message.react(moonaEmoji.approb);
+    message.react(moonaEmoji.approb);
   }
 
   async postFinalKaraoke(streamDetails: StreamDetails, description: Array<string>): Promise<void> {

@@ -51,7 +51,7 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
         { ...streamRes, thumbnailUrl: json.link, streamId },
         'streamId',
       );
-      if (!message.deleted) await message.react(moonaEmoji.approb);
+      await message.react(moonaEmoji.approb);
     } catch (err) {
       console.error(err);
     }
@@ -233,7 +233,7 @@ export class KoroTaggerCommand extends Command implements CommandInterface {
       await this.postFinalKaraoke(streamDetails, description);
 
       output.messages.forEach((messageCheck) => {
-        if (!messageCheck.deleted) message.react(moonaEmoji.approb);
+        message.react(moonaEmoji.approb);
       });
     }
   }

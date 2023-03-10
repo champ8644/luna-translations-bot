@@ -8,38 +8,35 @@ import imgur from '../imgur';
 import { matchYoutube } from '../utils/regexUtils';
 import { Command, CommandInterface } from './commandInterface';
 
-export class SetActiveStreamCommand
-  extends Command
-  implements CommandInterface
-{
-  commandNames = ["active"];
+export class SetActiveStreamCommand extends Command implements CommandInterface {
+  commandNames = ['active'];
   args = [
     {
-      name: "type",
+      name: 'type',
       type: `"execution" | "readonly" | undefined - default as execution`,
-      description: "Specify type of query",
+      description: 'Specify type of query',
     },
     {
-      name: "id",
-      type: "string - yt_stream_id",
-      description: "Youtube stream id in various format",
+      name: 'id',
+      type: 'string - yt_stream_id',
+      description: 'Youtube stream id in various format',
     },
   ];
 
   alias(): string {
-    return this.commandNames.join(" | ");
+    return this.commandNames.join(' | ');
   }
 
   help(): string {
-    return this.helpText("Set active stream details instead of koro");
+    return this.helpText('Set active stream details instead of koro');
   }
 
   async run(message: Message, args: Array<string>): Promise<void> {
     const [, payload1, payload2] = args;
     let streamId: string;
     let isExecution = true;
-    if (payload1 === "execution") streamId = payload2;
-    else if (payload1 === "readonly") {
+    if (payload1 === 'execution') streamId = payload2;
+    else if (payload1 === 'readonly') {
       streamId = payload2;
       isExecution = false;
     } else streamId = payload1;
@@ -52,16 +49,10 @@ export class SetActiveStreamCommand
       let json: any;
       try {
         const [, ...payloads] = args;
-        const payload = payloads.join(" ");
-        console.log(
-          "🚀 ~ file: SetActiveStreamCommand.ts ~ line 55 ~ run ~ payload1",
-          payload
-        );
+        const payload = payloads.join(' ');
+        console.log('🚀 ~ file: SetActiveStreamCommand.ts ~ line 55 ~ run ~ payload1', payload);
         json = JSON.parse(payload);
-        console.log(
-          "🚀 ~ file: SetActiveStreamCommand.ts ~ line 55 ~ run ~ json",
-          json
-        );
+        console.log('🚀 ~ file: SetActiveStreamCommand.ts ~ line 55 ~ run ~ json', json);
         this.onJSONActiveStream(message, json);
       } catch (err) {
         message.reply(`Active stream/JSON invalid`);
@@ -83,27 +74,25 @@ export class SetActiveStreamCommand
     timestamp: number;
   }) {
     const defaultObj = {
-      channelId: "UCP0BspO_AMEe3aQqqpo89Dg",
-      channelTitle: "Moona Hoshinova hololive-ID",
+      channelId: 'UCP0BspO_AMEe3aQqqpo89Dg',
+      channelTitle: 'Moona Hoshinova hololive-ID',
       isMoona: true,
       isKaraoke: true,
     };
     const checkObj = {
-      streamId: "string",
-      publishedAt: "string",
-      title: "string",
-      thumbnailUrl: "string",
-      isArchive: "boolean",
-      isKaraoke: "boolean",
-      timestamp: "number",
+      streamId: 'string',
+      publishedAt: 'string',
+      title: 'string',
+      thumbnailUrl: 'string',
+      isArchive: 'boolean',
+      isKaraoke: 'boolean',
+      timestamp: 'number',
     } as const;
     _.forEach(checkObj, (val, key) => {
       if (streamJSON[key as keyof typeof checkObj] === undefined)
         throw `key ${key}:${val} is missing`;
       if (typeof streamJSON[key as keyof typeof checkObj] !== val)
-        throw `${key} is not ${val}; is ${typeof streamJSON[
-          key as keyof typeof checkObj
-        ]}`;
+        throw `${key} is not ${val}; is ${typeof streamJSON[key as keyof typeof checkObj]}`;
     });
     return _.assign(defaultObj, streamJSON);
   }
@@ -122,7 +111,7 @@ export class SetActiveStreamCommand
       thumbnailUrl: string;
       channelTitle: string;
       timestamp: number;
-    }
+    },
   ) {
     try {
       let streamJSON;
@@ -133,49 +122,42 @@ export class SetActiveStreamCommand
         return;
       }
 
-      const json = await imgur.uploadUrl(streamJSON.thumbnailUrl, "VAwVpeR");
+      const json = await imgur.uploadUrl(streamJSON.thumbnailUrl, 'VAwVpeR');
       await SQL.insertIntoUpdate(
-        "stream_main",
+        'stream_main',
         {
           ...streamJSON,
           thumbnailUrl: json.link,
           streamId: streamJSON.streamId,
         },
-        "streamId"
+        'streamId',
       );
 
-      if (!message.deleted) await message.react(moonaEmoji.approb);
+      await message.react(moonaEmoji.approb);
     } catch (err) {
       console.error(err);
     }
   }
 
-  async onKoroActiveStream(
-    message: Message,
-    streamId: string,
-    isExecution: boolean
-  ) {
+  async onKoroActiveStream(message: Message, streamId: string, isExecution: boolean) {
     try {
       const streamRes = await getStreamDetails(streamId);
       if (!streamRes)
         return message.reply(
-          `Active stream at https://www.youtube.com/watch?v=${streamId} not found`
+          `Active stream at https://www.youtube.com/watch?v=${streamId} not found`,
         );
       if (isExecution) {
-        const json = await imgur.uploadUrl(
-          streamRes.thumbnailUrl.trim(),
-          "VAwVpeR"
-        );
+        const json = await imgur.uploadUrl(streamRes.thumbnailUrl.trim(), 'VAwVpeR');
         await SQL.insertIntoUpdate(
-          "stream_main",
+          'stream_main',
           { ...streamRes, thumbnailUrl: json.link, streamId },
-          "streamId"
+          'streamId',
         );
       } else {
         message.reply(`\`\`\`json
 ${JSON.stringify(streamRes, null, 2)}\`\`\``);
       }
-      if (!message.deleted) await message.react(moonaEmoji.approb);
+      await message.react(moonaEmoji.approb);
     } catch (err) {
       console.error(err);
     }

@@ -31,9 +31,9 @@ export class ListenKoroCommand extends Command implements CommandInterface {
       ["botId", "channelId", "type"],
       payload
     );
-    if (!message.deleted)
+    
       await message.reply(
         `\`\`\`Listening to korotag output from "${name}"\`\`\``
       );
-  }
+ 
 }

@@ -10,15 +10,15 @@ import { Command, CommandInterface } from './commandInterface';
 import { embedDeletor } from './embedCreator';
 
 export class DeleteCommand extends Command implements CommandInterface {
-  commandNames = ["delete", "d"];
+  commandNames = ['delete', 'd'];
   args = [
     {
-      name: "line No.",
-      type: "number | number.number - (Where the latter number is ss_ eg. song 10 (ss 2))",
-      description: "Number of line that you want to edit",
+      name: 'line No.',
+      type: 'number | number.number - (Where the latter number is ss_ eg. song 10 (ss 2))',
+      description: 'Number of line that you want to edit',
     },
     {
-      name: "freeze | f",
+      name: 'freeze | f',
       description: "append 'freeze' to command to not shift the song number up",
     },
   ];
@@ -26,7 +26,7 @@ export class DeleteCommand extends Command implements CommandInterface {
 
   help(): string {
     return this.helpText(
-      "Remove a line from Moona-Librarian Post at line, append 'freeze' to not shift the song number up"
+      "Remove a line from Moona-Librarian Post at line, append 'freeze' to not shift the song number up",
     );
   }
 
@@ -34,35 +34,27 @@ export class DeleteCommand extends Command implements CommandInterface {
     const ID = originalMessage.id;
     const [, songNumberText, isFreezeText] = args;
     const isShift = isFreezeText
-      ? isFreezeText.toLowerCase() !== "freeze" &&
-        isFreezeText.toLowerCase() !== "f"
+      ? isFreezeText.toLowerCase() !== 'freeze' && isFreezeText.toLowerCase() !== 'f'
       : true;
     if (!ID) throw "Please specify post's ID.";
-    if (!songNumberText) throw "Please specify song number.";
+    if (!songNumberText) throw 'Please specify song number.';
     const [, songNumberStr, seasonNumberStr] =
       /^\s*(\d+)(?:\.(\d+))?\s*$/.exec(songNumberText) || [];
     const songNumber = Number(songNumberStr);
     let seasonNumber: number | undefined;
-    if (!seasonNumberStr || Number(seasonNumberStr) === 1)
-      seasonNumber = undefined;
+    if (!seasonNumberStr || Number(seasonNumberStr) === 1) seasonNumber = undefined;
     else seasonNumber = Number(seasonNumberStr);
-    if (Number.isNaN(songNumber) || songNumber <= 0)
-      throw "Invalid song number.";
+    if (Number.isNaN(songNumber) || songNumber <= 0) throw 'Invalid song number.';
     if (seasonNumber && (Number.isNaN(seasonNumber) || seasonNumber <= 0))
-      throw "Invalid season number.";
+      throw 'Invalid season number.';
     if (!songNumber)
       throw `Invalid song number format\n\tplease use "1" for 1st song or "1.2" for 1st song (ss2)`;
-    if (originalMessage.author.id !== client.application?.id)
-      throw `I can only edit my post.`;
-    if (!originalMessage.embeds.length) throw "Invalid post: no embed detected";
+    if (originalMessage.author.id !== client.application?.id) throw `I can only edit my post.`;
+    if (!originalMessage.embeds.length) throw 'Invalid post: no embed detected';
     return { songNumber, seasonNumber, isShift };
   }
 
-  async getEmbedEditor(
-    originalMessage: Message,
-    songNumber: number,
-    seasonNumber?: number
-  ) {
+  async getEmbedEditor(originalMessage: Message, songNumber: number, seasonNumber?: number) {
     const { description } = originalMessage.embeds[0];
     const lines: Array<LineComponent> = [];
     description?.split(/\n/g).forEach((line) => {
@@ -73,15 +65,14 @@ export class DeleteCommand extends Command implements CommandInterface {
 
     const foundIdx = lines.findIndex(
       (line) =>
-        songNumber === line.songNumber &&
-        (!seasonNumber || seasonNumber === line.seasonNumber)
+        songNumber === line.songNumber && (!seasonNumber || seasonNumber === line.seasonNumber),
     );
     const found = lines[foundIdx];
 
     if (!found)
       throw (
         `Cannot find song number "${songNumber}` +
-        (seasonNumber ? ` (ss ${seasonNumber})` : "") +
+        (seasonNumber ? ` (ss ${seasonNumber})` : '') +
         '".'
       );
     return { lines, found, foundIdx };
@@ -92,8 +83,7 @@ export class DeleteCommand extends Command implements CommandInterface {
     let currentMessage = indexMesssage;
     while (i > 0 && currentMessage.reference?.messageId) {
       const parentMessage = await currentMessage.fetchReference();
-      if (currentMessage.deletable && !currentMessage.hasThread)
-        currentMessage.delete();
+      if (currentMessage.deletable && !currentMessage.hasThread) currentMessage.delete();
       currentMessage = parentMessage;
       i--;
     }
@@ -103,7 +93,7 @@ export class DeleteCommand extends Command implements CommandInterface {
     message: Message,
     originalMessage: Message,
     found: LineComponent,
-    isShift: boolean
+    isShift: boolean,
   ): Promise<string> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -111,7 +101,7 @@ export class DeleteCommand extends Command implements CommandInterface {
           content: `Press ${moonaEmoji.approb} for confirmation, ${
             moonaEmoji.denied
           } for cancel\n(This message will be deleted automatically <t:${getUnixTime(
-            addMilliseconds(new Date(), this.timeLimit)
+            addMilliseconds(new Date(), this.timeLimit),
           )}:R>)`,
           embeds: [
             embedDeletor({
@@ -128,27 +118,27 @@ export class DeleteCommand extends Command implements CommandInterface {
         const reactionCollector = finalMessage.createReactionCollector({
           filter: (reaction, user) =>
             [moonaEmoji.string.approb, moonaEmoji.string.denied].includes(
-              reaction.emoji.name || ""
+              reaction.emoji.name || '',
             ) && user.id === message.author.id,
           time: config.timeLimit,
         });
-        reactionCollector.on("collect", (collected) => {
-          reactionCollector.stop(collected.emoji.name || "");
+        reactionCollector.on('collect', (collected) => {
+          reactionCollector.stop(collected.emoji.name || '');
         });
-        reactionCollector.on("end", async (collected, reason) => {
+        reactionCollector.on('end', async (collected, reason) => {
           switch (reason) {
             case moonaEmoji.string.approb:
               this.disposeMessage(finalMessage, 4);
-              resolve("accept");
+              resolve('accept');
               break;
             case moonaEmoji.string.denied:
             default:
               this.disposeMessage(finalMessage, 4);
-              resolve("cancel");
+              resolve('cancel');
           }
         });
-        if (!finalMessage.deleted) await finalMessage.react(moonaEmoji.approb);
-        if (!finalMessage.deleted) await finalMessage.react(moonaEmoji.denied);
+        await finalMessage.react(moonaEmoji.approb);
+        await finalMessage.react(moonaEmoji.denied);
       } catch (err) {
         reject(err);
       }
@@ -166,9 +156,8 @@ export class DeleteCommand extends Command implements CommandInterface {
     const originalEmbed = originalMessage.embeds[0];
 
     const foundCount = lines.reduce(
-      (state, next) =>
-        next.songNumber === found.songNumber ? state + 1 : state,
-      0
+      (state, next) => (next.songNumber === found.songNumber ? state + 1 : state),
+      0,
     );
     const shiftModeSeason = foundCount > 1;
     const foundSeasonNumber = found.seasonNumber || 1;
@@ -178,8 +167,7 @@ export class DeleteCommand extends Command implements CommandInterface {
         lines.forEach((line) => {
           if (line.songNumber === found.songNumber) {
             // same song number but season number is greater
-            if (line.seasonNumber)
-              if (line.seasonNumber > foundSeasonNumber) line.seasonNumber--;
+            if (line.seasonNumber) if (line.seasonNumber > foundSeasonNumber) line.seasonNumber--;
           }
         });
       } else {
@@ -195,7 +183,7 @@ export class DeleteCommand extends Command implements CommandInterface {
     const newDescription = lines
       .filter((line, idx) => idx !== foundIdx)
       .map((line) => line.toRaw())
-      .join("\n");
+      .join('\n');
 
     originalMessage.edit({
       embeds: [originalEmbed.setDescription(newDescription)],
@@ -209,29 +197,29 @@ export class DeleteCommand extends Command implements CommandInterface {
         message.guildId === message.reference.guildId &&
         message.reference.messageId
       ) {
-        const originalMessage = await message.channel.messages.fetch(
-          message.reference.messageId
-        );
+        const originalMessage = await message.channel.messages.fetch(message.reference.messageId);
         // Only response to this bot's own post reply.
         if (originalMessage.author.id === client.application?.id) {
           // Find song number from args
-          const { songNumber, seasonNumber, isShift } =
-            await this.getSongSeasonNumber(originalMessage, args);
+          const { songNumber, seasonNumber, isShift } = await this.getSongSeasonNumber(
+            originalMessage,
+            args,
+          );
           // use args to get line & embed to send into channel
           const { found, lines, foundIdx } = await this.getEmbedEditor(
             originalMessage,
             songNumber,
-            seasonNumber
+            seasonNumber,
           );
 
           const confirmedResponse = await this.showConfirmation(
             message,
             originalMessage,
             found,
-            isShift
+            isShift,
           );
 
-          if (confirmedResponse === "accept")
+          if (confirmedResponse === 'accept')
             await this.deleteOriginalEmbed({
               originalMessage,
               lines,
