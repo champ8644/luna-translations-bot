@@ -12,6 +12,7 @@ import { legends } from './legends';
 import { mystic } from './mystic';
 import { pixela } from './pixela';
 import { polygon } from './polygon';
+import { special } from './special';
 
 export const streamers = StreamerArray([
   // ...hololive,
@@ -24,6 +25,7 @@ export const streamers = StreamerArray([
   ...indies,
   ...polygon,
   ...mystic,
+  ...special,
 ] as const);
 
 export const streamersMap: Map<YouTubeChannelId, Streamer> = new Map(
@@ -34,8 +36,8 @@ export const streamersYtIdSet: Set<YouTubeChannelId> = new Set(streamers.map((s)
 
 export const names = streamers.map((x) => x.name);
 export const twitters = streamers.map((x) => x.twitter);
-export type StreamerName = typeof names[number] | 'all';
-export type StreamerTwitter = typeof twitters[number];
+export type StreamerName = (typeof names)[number] | 'all';
+export type StreamerTwitter = (typeof twitters)[number];
 
 export function getStreamerList(): string {
   return streamers.map((streamer) => streamer.name).join(', ');

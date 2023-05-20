@@ -4,8 +4,8 @@ import youtube from './youtube';
 
 export function main() {
   youtube.search(
-    'Magcro Ravencroft Ch.',
-    2,
+    'Roselia de Magentia',
+    8,
     { part: 'snippet', type: 'channel' },
     function (error, result) {
       if (error) {
